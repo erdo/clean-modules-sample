@@ -26,8 +26,8 @@ data class PollenCount(
 
 @Serializable
 data class Temperature(
-    val maxTempC: Int = 35,
-    val minTempC: Int = 10,
+    val maxTempC: Int? = null,
+    val minTempC: Int? = null,
 )
 
 @Serializable

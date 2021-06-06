@@ -3,18 +3,17 @@ package foo.bar.example.clean.di
 import co.early.fore.core.time.SystemTimeWrapper
 import co.early.fore.kt.core.delegate.ForeDelegateHolder
 import co.early.fore.kt.net.InterceptorLogging
-import co.early.fore.kt.net.apollo.CallProcessorApollo
 import co.early.fore.kt.net.ktor.CallProcessorKtor
-import co.early.fore.kt.net.retrofit2.CallProcessorRetrofit2
 import co.early.persista.PerSista
 import foo.bar.example.clean.App
-import foo.bar.example.clean.data.ktor.GlobalRequestInterceptor
-import foo.bar.example.clean.data.ktor.services.pollen.PollenApi
-import foo.bar.example.clean.data.ktor.services.pollen.PollenServiceImp
-import foo.bar.example.clean.data.ktor.services.temperature.TemperatureApi
-import foo.bar.example.clean.data.ktor.services.temperature.TemperatureServiceImp
-import foo.bar.example.clean.data.ktor.services.windspeed.WindSpeedApi
-import foo.bar.example.clean.data.ktor.services.windspeed.WindSpeedServiceImp
+import foo.bar.example.clean.data.api.ktor.ErrorHandler
+import foo.bar.example.clean.data.api.ktor.GlobalRequestInterceptor
+import foo.bar.example.clean.data.api.ktor.services.pollen.PollenApi
+import foo.bar.example.clean.data.api.ktor.services.pollen.PollenServiceImp
+import foo.bar.example.clean.data.api.ktor.services.temperature.TemperatureApi
+import foo.bar.example.clean.data.api.ktor.services.temperature.TemperatureServiceImp
+import foo.bar.example.clean.data.api.ktor.services.windspeed.WindSpeedApi
+import foo.bar.example.clean.data.api.ktor.services.windspeed.WindSpeedServiceImp
 import foo.bar.example.clean.domain.weather.PollenService
 import foo.bar.example.clean.domain.weather.TemperatureService
 import foo.bar.example.clean.domain.weather.WindSpeedService
@@ -39,7 +38,7 @@ val dataModule = module(override = true) {
 
     single {
         CallProcessorKtor(
-            foo.bar.example.clean.data.ktor.ErrorHandler(get())
+            ErrorHandler(get())
         )
     }
 
@@ -59,7 +58,7 @@ val dataModule = module(override = true) {
      */
 
     single<TemperatureService> {
-        TemperatureServiceImp (
+        TemperatureServiceImp(
             TemperatureApi.create(get()),
             get(),
             get()
@@ -67,7 +66,7 @@ val dataModule = module(override = true) {
     }
 
     single<WindSpeedService> {
-        WindSpeedServiceImp (
+        WindSpeedServiceImp(
             WindSpeedApi.create(get()),
             get(),
             get()
@@ -75,7 +74,7 @@ val dataModule = module(override = true) {
     }
 
     single<PollenService> {
-        PollenServiceImp (
+        PollenServiceImp(
             PollenApi.create(get()),
             get(),
             get()
@@ -86,11 +85,11 @@ val dataModule = module(override = true) {
      * Misc Data
      */
 
-    single{
+    single {
         SystemTimeWrapper()
     }
 
-    single<CoroutineDispatcher>{
+    single<CoroutineDispatcher> {
         Dispatchers.Main.immediate
     }
 

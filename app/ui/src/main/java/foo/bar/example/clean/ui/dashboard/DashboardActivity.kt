@@ -3,19 +3,12 @@ package foo.bar.example.clean.ui.dashboard
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import co.early.fore.core.ui.SyncableView
-import co.early.fore.kt.core.delegate.ForeDelegateHolder
 import co.early.fore.kt.core.ui.ForeLifecycleObserver
 import co.early.fore.kt.core.ui.SyncTrigger
-import co.early.fore.kt.core.ui.showOrGone
 import co.early.fore.kt.core.ui.showOrInvisible
-import coil.load
-import foo.bar.example.clean.domain.ErrorResolution.*
-import foo.bar.example.clean.domain.updater.UpdateModel
-import foo.bar.example.clean.domain.weather.WeatherModel
 import foo.bar.example.clean.ui.R
 import foo.bar.example.clean.ui.common.showToast
 import kotlinx.android.synthetic.main.activity_dashboard.*
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalStdlibApi
@@ -54,6 +47,7 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
             dashboard_updating_text.showOrInvisible(!updateViewState.autoRefreshing)
             dashboard_updating_percentbar.showOrInvisible(updateViewState.autoRefreshing)
             dashboard_updating_percentbar.setPercent(updateViewState.timeElapsedPcent)
+            dashboard_pollenlevel_img.setImageResource(weather.pollenLevelImageRes)
         }
 
 //        viewModel.state.weather.apply {

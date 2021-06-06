@@ -11,6 +11,7 @@ import co.early.fore.kt.core.observer.ObservableImp
 import co.early.persista.PerSista
 import foo.bar.example.clean.domain.Randomizer
 import foo.bar.example.clean.domain.ErrorResolution
+import foo.bar.example.clean.domain.navigation.NavigationModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -68,7 +69,7 @@ class WeatherModel(
             return
         }
 
-        currentState = currentState.copy(isUpdating = true)
+        currentState = currentState.copy(isUpdating = true, error = null)
         notifyObservers()
 
         launchCustom(dispatcher) {

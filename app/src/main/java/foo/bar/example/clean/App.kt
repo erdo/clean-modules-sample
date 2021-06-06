@@ -4,9 +4,11 @@ import androidx.multidex.MultiDexApplication
 import clean.BuildConfig
 import co.early.fore.kt.core.delegate.DebugDelegateDefault
 import co.early.fore.kt.core.delegate.ForeDelegateHolder
+import co.early.persista.PerSista
 import foo.bar.example.clean.di.dataModule
 import foo.bar.example.clean.di.domainModule
 import foo.bar.example.clean.di.uiModule
+import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -52,7 +54,7 @@ class App : MultiDexApplication() {
         fun init() {
             // run any initialisation code here
 
-//            val persista: PerSista = inst.inject<PerSista>().value
+//            val persista: PerSista = inst.get()
 //            persista.wipeEverything {}
         }
     }

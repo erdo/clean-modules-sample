@@ -1,7 +1,5 @@
 package foo.bar.example.clean.ui.dashboard
 
-import foo.bar.example.clean.domain.weather.PollenLevel
-
 data class DashboardViewState(
     val weather: WeatherViewState = WeatherViewState(),
     val updateViewState: UpdateViewState = UpdateViewState(),
@@ -13,7 +11,7 @@ data class WeatherViewState(
     val maxTempC: Int = 0,
     val minTempC: Int = 0,
     val windSpeedKmpH: Int = 0,
-    val pollenLevel: PollenLevel = PollenLevel.UNKNOWN,
+    val pollenLevelImageRes: Int = 0,
     val isUpdating: Boolean = false,
 )
 
