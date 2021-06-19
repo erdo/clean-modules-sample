@@ -1,10 +1,12 @@
 package foo.bar.example.clean.ui.common.anim
 
 import android.animation.TimeInterpolator
+import android.view.animation.Interpolator
 import androidx.core.view.animation.PathInterpolatorCompat
 
 object CustomEasing {
-    val flopUp = PathInterpolatorCompat.create(1.000f, -0.165f, 0.665f, 0.390f) //https://matthewlein.com/tools/ceaser
-    val innieOutie = PathInterpolatorCompat.create(0.475f, 0.075f, 0.345f, 0.880f)
-    val bounceDown: TimeInterpolator = CordicBounceOut()
+    // you can design your own easing paths here: https://matthewlein.com/tools/ceaser
+    val upRamp: Interpolator = PathInterpolatorCompat.create(0.390f, 0.025f, 0.960f, 0.570f)
+    val straightNoChaser: Interpolator = PathInterpolatorCompat.create(0.250f, 0.250f, 0.750f, 0.750f)
+    val bounceOut: TimeInterpolator = CordicBounceOut()
 }

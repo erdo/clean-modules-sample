@@ -14,7 +14,9 @@ import co.early.fore.core.ui.SyncableView
  * syncView() gets called each time any of the models change their state
  */
 @Suppress("LeakingThis")
-abstract class BaseViewModel(vararg observablesList: Observable): ViewModel(), SyncableView {
+abstract class BaseViewModel(
+    vararg observablesList: Observable
+): ViewModel(), SyncableView {
 
     private val observableGroup: ObservableGroup
     private val observer = Observer { syncView() }

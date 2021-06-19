@@ -4,11 +4,17 @@ import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import co.early.fore.core.ui.SyncableView
 import co.early.fore.kt.core.ui.ForeLifecycleObserver
-import co.early.fore.kt.core.ui.SyncTrigger
 import co.early.fore.kt.core.ui.showOrInvisible
+import co.early.fore.kt.core.ui.synctrigger.ResetRule
+import co.early.fore.kt.core.ui.synctrigger.SyncTrigger
+import co.early.fore.kt.core.ui.synctrigger.SyncTriggerKeeper
+import foo.bar.example.clean.domain.weather.PollenLevel
 import foo.bar.example.clean.ui.R
+import foo.bar.example.clean.ui.common.prettyPrint
 import foo.bar.example.clean.ui.common.showToast
-import kotlinx.android.synthetic.main.activity_dashboard.*
+import foo.bar.example.clean.ui.common.toImgRes
+import kotlinx.android.synthetic.main.inc_dashboard.*
+import kotlinx.android.synthetic.main.inc_diagnostics.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalStdlibApi
@@ -18,6 +24,9 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
     private val viewModel: DashboardViewModel by viewModel()
 
     private lateinit var showErrorSyncTrigger: SyncTrigger
+    private lateinit var fadePollenSyncTrigger: SyncTriggerKeeper<PollenLevel>
+    private lateinit var rotateWindTurbineSyncTrigger: SyncTriggerKeeper<Int>
+    private lateinit var animations: DashboardAnimations
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,45 +35,72 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
         lifecycle.addObserver(ForeLifecycleObserver(this, viewModel))
 
         //set up click listeners
-        dashboard_startupdates_btn.setOnClickListener { viewModel.startUpdates() }
-        dashboard_stopupdates_btn.setOnClickListener { viewModel.stopUpdates() }
+        dashboard_startautorefresh_btn.setOnClickListener { viewModel.startUpdates() }
+        dashboard_stopautorefresh_btn.setOnClickListener { viewModel.stopUpdates() }
         dashboard_updatenow_btn.setOnClickListener { viewModel.updateNow() }
 
-        //set up syncTriggers
-        showErrorSyncTrigger = SyncTrigger(
-            triggeredWhen = { viewModel.viewState.userErrorMessage != null }
-        ){
-            viewModel.viewState.userErrorMessage?.let{ msg ->
-                showToast(msg)
-            }
-        }
+        // set up animations
+        animations = DashboardAnimations(
+            dashboard_windturbine_img,
+            dashboard_pollenlevel_img,
+            dashboard_pollenbackground_img,
+            this
+        )
+
+        setupSyncTriggers()
     }
 
     override fun syncView() {
 
         viewModel.viewState.apply {
-            dashboard_busy_progbar.showOrInvisible(isBusy)
-            dashboard_updating_text.showOrInvisible(!updateViewState.autoRefreshing)
-            dashboard_updating_percentbar.showOrInvisible(updateViewState.autoRefreshing)
-            dashboard_updating_percentbar.setPercent(updateViewState.timeElapsedPcent)
-            dashboard_pollenlevel_img.setImageResource(weather.pollenLevelImageRes)
+            dashboard_busy_progbar.showOrInvisible(isUpdating)
+            dashboard_updating_text.showOrInvisible(!autoRefresh.autoRefreshing)
+            dashboard_startautorefresh_btn.isEnabled = (!autoRefresh.autoRefreshing)
+            dashboard_stopautorefresh_btn.isEnabled = (autoRefresh.autoRefreshing)
+            dashboard_updatenow_btn.isEnabled = (!isUpdating)
+            dashboard_update_countdown.setPercent(autoRefresh.timeElapsedPcent)
+            dashboard_pollenlevel_img.setImageResource(weather.pollenLevel.toImgRes())
+            dashboard_tempmaxmin.setMaxPercent(weather.maxTempPercent())
+            dashboard_tempmaxmin.setMinPercent(weather.minTempPercent())
+            diagnostics_viewstate.text = this.prettyPrint()
         }
 
-//        viewModel.state.weather.apply {
-//            weather_busy_prog.showOrInvisible(isUpdating)
-//            weather_container_view.showOrInvisible(!isUpdating)
-//            weather_max_txt.text = maxTempC
-//            weather_min_txt.text = minTempC
-//            weather_desc_txt.text = weatherDesc
-//            weather_icon_img.src = weatherIconRes
-//        }
-//
-//        launch_fetch_btn.isEnabled = !launchRepo.currentState.isUpdating
-//        launch_id_textview.text = "id: ${launchRepo.currentState.launch.id}"
-//        launch_patch_img.load(launchRepo.currentState.launch.patchImgUrl)
-//        launch_busy_progbar.showOrInvisible(launchRepo.currentState.isUpdating)
-//        launch_detailcontainer_linearlayout.showOrGone(!launchRepo.currentState.isUpdating)
-
         showErrorSyncTrigger.checkLazy()
+        fadePollenSyncTrigger.checkLazy()
+        rotateWindTurbineSyncTrigger.check()
+    }
+
+    /**
+     * This is how we bridge the gap between a state based architecture to an event based UI trigger
+     * see here for more details: https://erdo.github.io/android-fore/01-views.html#synctrigger
+     */
+    private fun setupSyncTriggers() {
+
+        showErrorSyncTrigger = SyncTrigger(
+            triggeredWhen = { viewModel.viewState.errorResolution != null },
+            doThisWhenTriggered = {
+                viewModel.viewState.errorResolution?.let { msg ->
+                    showToast(msg)
+                }
+            }
+        )
+
+        fadePollenSyncTrigger = SyncTriggerKeeper<PollenLevel>(
+            triggeredWhen = { keeper ->
+                keeper.swap { viewModel.viewState.weather.pollenLevel }
+            },
+            doThisWhenTriggered = {
+                animations.animatePollenChange()
+            }
+        ).resetRule(ResetRule.IMMEDIATELY)
+
+        rotateWindTurbineSyncTrigger = SyncTriggerKeeper<Int>(
+            triggeredWhen = { keeper ->
+                keeper.swap { viewModel.viewState.weather.windSpeedKmpH }
+            },
+            doThisWhenTriggered = {
+                animations.animateWindSpeedChange(viewModel.viewState.weather.windSpeedPercent())
+            }
+        ).resetRule(ResetRule.IMMEDIATELY)
     }
 }

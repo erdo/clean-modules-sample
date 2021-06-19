@@ -2,16 +2,13 @@ package foo.bar.example.clean.ui.dashboard
 
 import co.early.fore.core.observer.Observable
 import co.early.fore.kt.core.observer.ObservableImp
-import foo.bar.example.clean.domain.ErrorResolution
-import foo.bar.example.clean.domain.ErrorResolution.*
 import foo.bar.example.clean.domain.refresher.UpdateModel
-import foo.bar.example.clean.domain.weather.PollenLevel
 import foo.bar.example.clean.domain.weather.WeatherModel
-import foo.bar.example.clean.ui.R
 import foo.bar.example.clean.ui.common.BaseViewModel
+import foo.bar.example.clean.ui.common.toImgRes
 
 @ExperimentalStdlibApi
-class DashboardViewModel (
+class DashboardViewModel(
     private val weatherModel: WeatherModel,
     private val updateModel: UpdateModel,
 ) : BaseViewModel(
@@ -23,55 +20,40 @@ class DashboardViewModel (
         private set
 
     init {
-       syncView()
+        syncView()
     }
 
     override fun syncView() {
+
         viewState = DashboardViewState(
             WeatherViewState(
-                maxTempC = weatherModel.currentState.weatherReport.temperature.maxTempC,
-                minTempC = weatherModel.currentState.weatherReport.temperature.minTempC,
+                maxTempC = weatherModel.currentState.weatherReport.temperature.maxTempC
+                    ?: MIN_DIAL_TEMP,
+                minTempC = weatherModel.currentState.weatherReport.temperature.minTempC
+                    ?: MIN_DIAL_TEMP,
                 windSpeedKmpH = weatherModel.currentState.weatherReport.windSpeed.windSpeedKmpH,
-                pollenLevelImageRes = weatherModel.currentState.weatherReport.pollenCount.pollenLevel.toImgRes(),
-                isUpdating = weatherModel.currentState.isUpdating,
+                pollenLevel = weatherModel.currentState.weatherReport.pollenCount.pollenLevel,
             ),
-            UpdateViewState(
+            AutoRefreshViewState(
                 timeElapsedPcent = updateModel.currentState.percentElapsedToNextUpdate(),
                 autoRefreshing = !updateModel.currentState.updatesPaused
             ),
-            userErrorMessage = weatherModel.currentState.error?.toUserMessage(),
-            isBusy = weatherModel.currentState.isUpdating
+            errorResolution = weatherModel.currentState.error,
+            isUpdating = weatherModel.currentState.isUpdating
         )
 
         notifyObservers()
     }
 
-    fun updateNow(){
+    fun updateNow() {
         weatherModel.fetchWeatherReport()
     }
 
-    fun startUpdates(){
+    fun startUpdates() {
         updateModel.start()
     }
 
-    fun stopUpdates(){
+    fun stopUpdates() {
         updateModel.stop()
-    }
-
-    private fun ErrorResolution.toUserMessage() : String {
-        return when (this) {
-            CHECK_NETWORK_THEN_RETRY -> "please check network"
-            RETRY_LATER -> "please try again"
-            LOGIN_THEN_RETRY -> "please login"
-        }
-    }
-
-    private fun PollenLevel.toImgRes() : Int {
-        return when (this) {
-            PollenLevel.HIGH -> R.drawable.pollen_high
-            PollenLevel.MEDIUM -> R.drawable.pollen_medium
-            PollenLevel.LOW -> R.drawable.pollen_low
-            PollenLevel.UNKNOWN -> 0
-        }
     }
 }

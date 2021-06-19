@@ -1,84 +1,111 @@
-//package foo.bar.example.clean.ui.common.widget
-//
-//import android.animation.ObjectAnimator
-//import android.content.Context
-//import android.graphics.Canvas
-//import android.util.AttributeSet
-//import android.widget.FrameLayout
-//import foo.bar.example.clean.ui.R
-//import kotlinx.android.synthetic.main.widget_maxminindicator.view.*
-//import kotlin.math.max
-//import kotlin.math.min
-//
-//@Suppress("DEPRECATION")
-//class MaxMinIndicator @JvmOverloads constructor(
-//        context: Context,
-//        attrs: AttributeSet? = null,
-//        defStyleAttr: Int = 0
-//) : FrameLayout(context, attrs, defStyleAttr) {
-//
-//    init {
-//        inflate(context, R.layout.activity_dashboard, this)
-//    }
-//
-//    private var widthPx: Float = 0.toFloat()
-//    private var heightPx: Float = 0.toFloat()
-//
-//    private var maxAnimator : ObjectAnimator? = null
-//    private var minAnimator : ObjectAnimator? = null
-//
-//    private var maxPercent = 0f
-//    private var minPercent = 0f
-//
-//
-//    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-//        super.onSizeChanged(w, h, oldw, oldh)
-//        widthPx = width.toFloat()
-//        heightPx = height.toFloat()
-//        invalidate()
-//    }
-//
-//    override fun onDraw(canvas: Canvas) {
-//        super.onDraw(canvas)
-//
-//        //background
-//        paint.color = backgroundColour
-//        canvas.drawRect(0f, 0f, widthPx, heightPx, paint)
-//
-//        //percent bar
-//        paint.color = progressColour
-//        canvas.drawRect(0f, heightPx/3, currentPercent * widthPx / 100, (heightPx*2)/3, paint)
-//
-//        progressAnimation()
-//    }
-//
-//    fun setPercent(targetPercent: Float) {
-//        this.targetPercent = maxOf(minOf(targetPercent, 100F), 0F)
-//        if (currentPercent == 0f) {//don't bother with the animation
-//            currentPercent = targetPercent
-//        }
-//        increasing = targetPercent > currentPercent
-//
-//        if (!increasing && !animateOnTheWayDown){
-//            currentPercent = targetPercent //skip animation on the way down
-//        }
-//
-//        invalidate()
-//    }
-//
-//    private fun progressAnimation() {
-//
-//        maxAnimator = ObjectAnimator.ofFloat(maxmin_max_img, "translationX", -heightPx / 2f, 0f)
-//        maxAnimator?.interpolator = CustomEasing.bounceDown
-//
-//
-//
-//        if (increasing && currentPercent < targetPercent) {
-//            currentPercent = min(targetPercent, currentPercent + step)
-//            invalidate()
-//        } else if (!increasing && currentPercent > targetPercent) {
-//            currentPercent = max(targetPercent, currentPercent - step)
-//            invalidate()
-//        }
-//    }
-//}
+package foo.bar.example.clean.ui.common.widget
+
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
+import android.content.Context
+import android.util.AttributeSet
+import android.view.View
+import android.widget.FrameLayout
+import foo.bar.example.clean.ui.R
+import foo.bar.example.clean.ui.common.anim.CustomEasing
+import foo.bar.example.clean.ui.common.anim.allowAnimationOutsideParent
+import kotlinx.android.synthetic.main.widget_maxminindicator.view.*
+
+class MaxMinIndicator @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
+
+    private val maxAnimSet = AnimatorSet()
+    private val minAnimSet = AnimatorSet()
+    private var maxObjectAnimator: ObjectAnimator? = null
+    private var minObjectAnimator: ObjectAnimator? = null
+    private var maxPercent = 0f
+    private var minPercent = 0f
+    private val animDurationMax: Long = 1000
+    private val animDurationMin: Long = 1200
+
+    init {
+        inflate(context, R.layout.widget_maxminindicator, this)
+
+        maxmin_max.allowAnimationOutsideParent()
+        maxmin_min.allowAnimationOutsideParent()
+
+        maxAnimSet.apply {
+            duration = animDurationMax
+            interpolator = CustomEasing.bounceOut
+        }
+        minAnimSet.apply {
+            duration = animDurationMin
+            interpolator = CustomEasing.bounceOut
+        }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        reRunAnimations()
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        reRunAnimations()
+    }
+
+    private fun reRunAnimations() {
+        maxObjectAnimator = animateToPercent(minPercent, maxmin_min, minObjectAnimator, minAnimSet)
+        maxObjectAnimator = animateToPercent(maxPercent, maxmin_max, maxObjectAnimator, maxAnimSet)
+    }
+
+    fun setMinPercent(percent: Float) {
+        if (minPercent != percent) {
+            minPercent = minOf(maxOf(percent, 0F), 100F)
+            minObjectAnimator =
+                animateToPercent(minPercent, maxmin_min, minObjectAnimator, minAnimSet)
+        }
+    }
+
+    fun setMaxPercent(percent: Float) {
+        if (maxPercent != percent) {
+            maxPercent = minOf(maxOf(percent, 0F), 100F)
+            maxObjectAnimator =
+                animateToPercent(maxPercent, maxmin_max, maxObjectAnimator, maxAnimSet)
+        }
+    }
+
+    private fun animateToPercent(
+        percent: Float,
+        targetView: View,
+        animator: ValueAnimator?,
+        animatorSet: AnimatorSet
+    ): ObjectAnimator? {
+
+        var newAnimator: ObjectAnimator? = null
+
+        if (height != 0 && targetView.height != 0) {
+
+            val currentPosition = animator?.animatedValue?.let {
+                if (it is Float) it.toFloat() else 0F
+            } ?: 0F
+            val targetPosition = -((height - targetView.height) * percent / 100)
+
+            if (targetPosition != currentPosition) {
+
+                newAnimator = ObjectAnimator.ofFloat(
+                    targetView,
+                    "translationY",
+                    currentPosition, targetPosition
+                )
+
+                animatorSet.cancel()
+                animatorSet.playTogether(
+                    newAnimator
+                )
+                animatorSet.start()
+            }
+        }
+
+        return newAnimator
+    }
+}
