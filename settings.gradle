@@ -1,5 +1,5 @@
 
-rootProject.name = "clean-modules"
+rootProject.name = "clean"
 
 include ':app'
 include ':app:data'

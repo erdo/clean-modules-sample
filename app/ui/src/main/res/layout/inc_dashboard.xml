@@ -39,7 +39,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
-        android:id="@+id/dashboard_busy_progbar"
+        android:id="@+id/dashboard_busy"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginBottom="10dp"
@@ -53,18 +53,18 @@
         android:layout_height="wrap_content"
         android:importantForAccessibility="no"
         android:src="@drawable/temp_scale"
-        app:layout_constraintEnd_toStartOf="@+id/dashboard_tempbar_img"
+        app:layout_constraintEnd_toStartOf="@+id/dashboard_tempbackground"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dashboard_updating_guideline" />
 
     <ImageView
-        android:id="@+id/dashboard_tempbar_img"
+        android:id="@+id/dashboard_tempbackground"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="temperature dial"
-        android:src="@drawable/temp_bar"
+        android:src="@drawable/temp_background"
         app:layout_constraintEnd_toStartOf="@+id/dashboard_tempmaxmin"
         app:layout_constraintStart_toEndOf="@+id/dashboard_tempscale_img"
         app:layout_constraintTop_toBottomOf="@+id/dashboard_updating_guideline" />
@@ -86,8 +86,8 @@
         android:importantForAccessibility="no"
         app:layout_constraintBottom_toTopOf="@+id/dashboard_tempunit_img"
         app:layout_constraintEnd_toStartOf="@+id/dashboard_windturbine_img"
-        app:layout_constraintStart_toEndOf="@+id/dashboard_tempbar_img"
-        app:layout_constraintTop_toTopOf="@+id/dashboard_tempbar_img" />
+        app:layout_constraintStart_toEndOf="@+id/dashboard_tempbackground"
+        app:layout_constraintTop_toTopOf="@+id/dashboard_tempbackground" />
 
     <ImageView
         android:id="@+id/dashboard_windturbine_img"

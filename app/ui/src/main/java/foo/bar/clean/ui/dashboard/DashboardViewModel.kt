@@ -5,7 +5,6 @@ import co.early.fore.kt.core.observer.ObservableImp
 import foo.bar.clean.domain.refresher.UpdateModel
 import foo.bar.clean.domain.weather.WeatherModel
 import foo.bar.clean.ui.common.BaseViewModel
-import foo.bar.clean.ui.common.toImgRes
 
 @ExperimentalStdlibApi
 class DashboardViewModel(

@@ -52,7 +52,7 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
     override fun syncView() {
 
         viewModel.viewState.apply {
-            dashboard_busy_progbar.showOrInvisible(isUpdating)
+            dashboard_busy.showOrInvisible(isUpdating)
             dashboard_updating_text.showOrInvisible(!autoRefresh.autoRefreshing)
             dashboard_startautorefresh_btn.isEnabled = (!autoRefresh.autoRefreshing)
             dashboard_stopautorefresh_btn.isEnabled = (autoRefresh.autoRefreshing)
