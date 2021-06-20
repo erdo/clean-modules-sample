@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <foo.bar.example.clean.ui.common.widget.PercentPie
+    <foo.bar.clean.ui.common.widget.PercentPie
         android:id="@+id/dashboard_update_countdown"
         android:layout_width="70dp"
         android:layout_height="70dp"
@@ -78,7 +78,7 @@
         app:layout_constraintStart_toStartOf="@+id/dashboard_tempscale_img"
         app:layout_constraintTop_toBottomOf="@+id/dashboard_tempscale_img" />
 
-    <foo.bar.example.clean.ui.common.widget.MaxMinIndicator
+    <foo.bar.clean.ui.common.widget.MaxMinIndicator
         android:id="@+id/dashboard_tempmaxmin"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
