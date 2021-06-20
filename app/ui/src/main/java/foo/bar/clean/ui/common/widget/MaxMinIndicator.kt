@@ -35,11 +35,11 @@ class MaxMinIndicator @JvmOverloads constructor(
 
         maxAnimSet.apply {
             duration = animDurationMax
-            interpolator = CustomEasing.bounceOut
+            interpolator = CustomEasing.hardBounceOut
         }
         minAnimSet.apply {
             duration = animDurationMin
-            interpolator = CustomEasing.bounceOut
+            interpolator = CustomEasing.hardBounceOut
         }
     }
 

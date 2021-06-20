@@ -2,17 +2,13 @@ package foo.bar.clean.ui.dashboard
 
 import android.animation.*
 import android.animation.ValueAnimator.INFINITE
-import android.os.Handler
-import android.os.Looper
 import android.view.View
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
-import co.early.fore.core.ui.SyncableView
 import foo.bar.clean.ui.common.anim.CustomEasing
 import foo.bar.clean.ui.common.anim.allowAnimationOutsideParent
 
 const val MAX_ROTATIONS_PER_SEC = 1.0
-const val POLLEN_LEVEL_CHANGE_DURATION_MS = 1000L
+const val POLLEN_LEVEL_CHANGE_DURATION_MS = 200L
+const val GRASS_ZOOM_DURATION_MS = 500L
 
 /**
  * We handle the pollen level and windspeed change animations here.
@@ -22,35 +18,30 @@ const val POLLEN_LEVEL_CHANGE_DURATION_MS = 1000L
 class DashboardAnimations(
     private val windTurbine: View,
     private val pollenView: View,
-    private val grassView: View,
-    private val syncableView: SyncableView
+    private val grassView: View
 ) {
 
     private var windSpeedAnim = ObjectAnimator.ofFloat(windTurbine, "rotation", 0f, 360f).apply {
         repeatCount = INFINITE
         interpolator = CustomEasing.straightNoChaser
     }
-
-    private val changePollenAnimSet = AnimatorSet().apply {
+    private val pollenLevelAnim = ObjectAnimator.ofFloat(pollenView, "alpha", 0f, 1f).apply {
         interpolator = CustomEasing.upRamp
         duration = POLLEN_LEVEL_CHANGE_DURATION_MS
-        addListener(
-            object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    // Handler otherwise when we draw, the animation
-                    // is still "running" on older android
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        grassView.visibility = VISIBLE
-                        syncableView.syncView()
-                    }, 10)
-                }
-            }
-        )
+    }
+    private val grassAnimX = ObjectAnimator.ofFloat(grassView, "scaleX", 0f, 1.0f).apply {
+        interpolator = CustomEasing.overPhlop
+        duration = GRASS_ZOOM_DURATION_MS
+    }
+    private val grassAnimY = ObjectAnimator.ofFloat(grassView, "scaleY", 0f, 1.0f).apply {
+        interpolator = CustomEasing.overPhlop
+        duration = GRASS_ZOOM_DURATION_MS
     }
 
     init {
         windTurbine.allowAnimationOutsideParent()
         pollenView.allowAnimationOutsideParent()
+        grassView.allowAnimationOutsideParent()
     }
 
     fun animateWindSpeedChange(percent: Float) {
@@ -74,16 +65,13 @@ class DashboardAnimations(
     }
 
     fun animatePollenChange() {
-
-        changePollenAnimSet.apply {
+        val changePollenAnimSet = AnimatorSet().apply {
             playTogether(
-                ObjectAnimator.ofFloat(pollenView, "alpha", 0f, 1f)
+                pollenLevelAnim,
+                grassAnimX,
+                grassAnimY,
             )
         }
-
-        // temporarily adjust things before running animation, syncView() gets
-        // called at the end of the animation anyway to put everything back to how it should be
-        grassView.visibility = INVISIBLE
         changePollenAnimSet.start()
     }
 }

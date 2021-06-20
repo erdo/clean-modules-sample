@@ -44,7 +44,6 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
             dashboard_windturbine_img,
             dashboard_pollenlevel_img,
             dashboard_pollenbackground_img,
-            this
         )
 
         setupSyncTriggers()
