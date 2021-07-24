@@ -35,8 +35,8 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
         lifecycle.addObserver(ForeLifecycleObserver(this, viewModel))
 
         //set up click listeners
-        dashboard_startautorefresh_btn.setOnClickListener { viewModel.startUpdates() }
-        dashboard_stopautorefresh_btn.setOnClickListener { viewModel.stopUpdates() }
+        dashboard_startautorefresh_btn.setOnClickListener { viewModel.startAutoRefresh() }
+        dashboard_stopautorefresh_btn.setOnClickListener { viewModel.stopAutoRefresh() }
         dashboard_updatenow_btn.setOnClickListener { viewModel.updateNow() }
 
         // set up animations

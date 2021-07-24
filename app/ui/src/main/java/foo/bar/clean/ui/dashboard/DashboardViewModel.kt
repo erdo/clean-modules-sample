@@ -2,17 +2,17 @@ package foo.bar.clean.ui.dashboard
 
 import co.early.fore.core.observer.Observable
 import co.early.fore.kt.core.observer.ObservableImp
-import foo.bar.clean.domain.refresher.UpdateModel
+import foo.bar.clean.domain.refresher.RefreshModel
 import foo.bar.clean.domain.weather.WeatherModel
 import foo.bar.clean.ui.common.BaseViewModel
 
 @ExperimentalStdlibApi
 class DashboardViewModel(
     private val weatherModel: WeatherModel,
-    private val updateModel: UpdateModel,
+    private val refreshModel: RefreshModel,
 ) : BaseViewModel(
     weatherModel,
-    updateModel,
+    refreshModel,
 ), Observable by ObservableImp() {
 
     var viewState = DashboardViewState()
@@ -26,16 +26,14 @@ class DashboardViewModel(
 
         viewState = DashboardViewState(
             WeatherViewState(
-                maxTempC = weatherModel.currentState.weatherReport.temperature.maxTempC
-                    ?: MIN_DIAL_TEMP,
-                minTempC = weatherModel.currentState.weatherReport.temperature.minTempC
-                    ?: MIN_DIAL_TEMP,
+                maxTempC = weatherModel.currentState.weatherReport.temperature.maxTempC ?: MIN_DIAL_TEMP,
+                minTempC = weatherModel.currentState.weatherReport.temperature.minTempC ?: MIN_DIAL_TEMP,
                 windSpeedKmpH = weatherModel.currentState.weatherReport.windSpeed.windSpeedKmpH,
                 pollenLevel = weatherModel.currentState.weatherReport.pollenCount.pollenLevel,
             ),
             AutoRefreshViewState(
-                timeElapsedPcent = updateModel.currentState.percentElapsedToNextUpdate(),
-                autoRefreshing = !updateModel.currentState.updatesPaused
+                timeElapsedPcent = refreshModel.currentState.percentElapsedToNextUpdate(),
+                autoRefreshing = !refreshModel.currentState.updatesPaused
             ),
             errorResolution = weatherModel.currentState.error,
             isUpdating = weatherModel.currentState.isUpdating
@@ -45,14 +43,17 @@ class DashboardViewModel(
     }
 
     fun updateNow() {
+        // these are fire and forget, the observers take care of any resulting changes
         weatherModel.fetchWeatherReport()
     }
 
-    fun startUpdates() {
-        updateModel.start()
+    fun startAutoRefresh() {
+        // these are fire and forget, the observers take care of any resulting changes
+        refreshModel.start()
     }
 
-    fun stopUpdates() {
-        updateModel.stop()
+    fun stopAutoRefresh() {
+        // these are fire and forget, the observers take care of any resulting changes
+        refreshModel.stop()
     }
 }

@@ -19,8 +19,8 @@ const val ONE_HOUR_MS: Long = ONE_SECOND_MS * 60 * 60
  * It has a state that indicates the time remaining before the next update
  */
 @ExperimentalStdlibApi
-class UpdateModel(
-    private val updaterUseCase: OnRefreshMediator,
+class RefreshModel(
+    private val onRefreshMediator: OnRefreshMediator,
     private val updateIntervalMilliSeconds: Long,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main.immediate,
     private val systemTimeWrapper: SystemTimeWrapper = SystemTimeWrapper(),
@@ -62,7 +62,7 @@ class UpdateModel(
                 notifyObservers()
 
                 if (timeRemaining == 0L) {
-                    updaterUseCase.refreshNow()
+                    onRefreshMediator.refreshNow()
                     // should probably use nanoTime here, but it's not a big deal
                     lastUpdated = systemTimeWrapper.currentTimeMillis()
                 }
