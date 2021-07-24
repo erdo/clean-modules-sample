@@ -79,9 +79,9 @@ class WeatherModel(
             // of this sample btw, you can do whatever you like here, including using
             // reactive streams if appropriate, but when you want to expose the calculated
             // state, you need to: 1) set it, and 2) call notifyObservers().
-            // (If you're interested, the carryOn extension function lets you transparently
-            // handle networking errors at each step, internet search for "andThen"
-            // functions and "railway oriented programming")
+            // (If you're interested, carryOn() lets you transparently
+            // handle networking errors at each step. Internet search for
+            // "railway oriented programming" and "andThen" functions)
             val weatherReport = pollenService.getPollenCounts()
                 .carryOn { pollenCounts ->
                     logger.i("received pollenCounts success")
