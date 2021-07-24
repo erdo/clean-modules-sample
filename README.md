@@ -38,6 +38,10 @@ All Android implementations of [clean architecture](https://blog.cleancoder.com/
 ## Where are the use cases?
 You might be familiar with the common implementations of clean architecture adapted for android apps that are mentioned at the top of these docs - they often use a particular form of stateless UseCase class implemented with reactive streams. If you're interested, the [use cases](https://en.wikipedia.org/wiki/Use_case) for this app can be found in the public functions of the domain models e.g. WeatherModel.fetchWeatherReport()
 
+## Thick domain layer
+One aspect of this app's structure I particularly like is that it solves the problem of a thin domain layer. Alternative clean implementations I've used end up with a domain module containing nothing more than Repository interfaces, data classes, and a large number of (usually trivial) UseCase classes. Remember the domain module is typically the only module that is pure kotlin and completely abstracted from android itself, that makes it easy to test and highly portable so we really want keep as much code there as possible - it'll set us up nicely if we want to move to KMP later, for example.
+
+
 # App template
 In case you want to use this app as a starting point for something else, there is a bash script included that will rename the app packages (it's written for mac, use at your own risk).
 
