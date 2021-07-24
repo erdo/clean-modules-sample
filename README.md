@@ -1,6 +1,6 @@
 # Clean Architecture (minus Reactive Streams)
 
-Many Android implementations of clean architecture use [Reactive Streams](http://www.reactive-streams.org/) (usually RxJava or Kotlin Flow) to connect architectural layers together. I believe that while Reactive Streams is a fantastic initiative, it is *completely the wrong abstraction* for architecting android applications.
+Many Android implementations of clean architecture use [Reactive Streams](http://www.reactive-streams.org/) (usually RxJava or Kotlin Flow) to connect architectural layers together. I believe that while Reactive Streams is a fantastic initiative, it is *completely the wrong abstraction* for **architecting android applications** and implementing non-trivial **reactive UIs** (please note, I'm not saying you shouldn't use reactive steams **in Android** there are plenty of good reasons to use reactive streams in general).
 
 Sounds crazy right? Well, take a look at the code, I'd love to hear back if you find a way to improve it further (for me, improvement means: quicker to develop, more robust, easier to understand and maintain, no magic, less boilerplate, thinner UI layer). These are the qualities that let a technique scale for huge mobile app projects IMO.
 
@@ -31,7 +31,7 @@ This is how the kotlin modules are arranged in this sample (domain is implemente
 
 ![module structure](architecture.png)
 
-All Android implementations of [clean architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) need to be adapted because the original clean architecture blog post leans towards server side considerations, it doesn't directly address mobile applications, or kotlin, or reactive UIs, or ViewModels, or even say much about how you should treat state. As such there are no presenters, controllers or entities in this sample, and we use the word [*model*](https://en.wikipedia.org/wiki/Domain_model) to represent domain mobel classes, and they collaborate with each other using **mediators**.
+All Android implementations of [clean architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) need to be adapted because the original clean architecture blog post leans towards server side considerations, it doesn't directly address mobile applications, or kotlin, or reactive UIs, or ViewModels, or even say much about how you should treat state. As such there are no presenters, controllers or entities in this sample, and we use the word [*model*](https://en.wikipedia.org/wiki/Domain_model) to represent domain model classes, and they collaborate with each other using **mediators**.
 
 ## Where are the use cases?
 You might be familiar with the common implementations of clean architecture adapted for android apps that are mentioned at the top of these docs - they often use a particular form of stateless UseCase class implemented with reactive streams. If you're interested, the [use cases](https://en.wikipedia.org/wiki/Use_case) for this app can be found in the public functions of the domain models e.g. WeatherModel.fetchWeatherReport()
@@ -45,17 +45,17 @@ cd clean-modules-sample
 chmod u+x change_package.sh
 ./change_package.sh -p com.mydomain.myapp
 ```
-Then open the app as usual in AS. You'll have to change the readme, the app icon yourself. And logcat can be filtered with: myapp_ (if you don't run the change_package script, logcat can be filtered with: clean_)
+Then open the app as usual in AS. You'll have to change the readme & the app icon yourself. And logcat can be filtered with: myapp_ (if you don't run the change_package script, logcat can be filtered with: clean_)
 
 This repo is also setup as a **github template repository** so you might want to run the script after selecting "Use this template" on the github UI first (of course you'll have to change "erdo/clean-modules-sample" to whatever you called your new repo).
 
 If you want to submit a PR though, you'll need to fork the repo, not template it.
 
 # Testing
-I haven't added any unit tests or integration tests. I might get around to it, but they would be the same as the tests for all the other samples I've written. If I do I will add them all to the **app** module (I've found that adding tests to the individual modules spreads the tests around for no particular reason and causes problems any time you have a common test class that you want to reuse - most of the modules can only see one or no other modules so they can't share test code and you end up either duplicating the test code or adding a common test module - which might as well be the app module :/ )
+I haven't added any unit tests or integration tests. I might get around to it, but they would be the same as the tests for all the other samples I've written. If I do I will add them all to the **app** module (I've found that adding tests to the individual modules spreads the tests around for no particular reason and causes problems any time you have a common test class that you want to reuse - most of the modules can only see one or no other modules so they can't share test code and you end up either duplicating shared test code or adding a common test module - which might as well be the app module :/ )
 
 # Next steps
-I'm working on a commercial sample at the moment which is a lot bigger and uses GraphQL, Ktor and Retrofit in the same app, it has exactly the same structure as this code, but there is so much of it, it's not really suitable as a clean architecture without reactive streams primer. It'll probably drop in a month or so, when it does I'll add it to the android-fore [project summary](https://github.com/erdo?tab=projects).
+I'm working on a commercial sample at the moment which is a lot bigger and uses GraphQL, Ktor and Retrofit in the same app, it has exactly the same structure as this code, but there is so much of it, it's not really suitable as a "clean architecture without reactive streams" primer. It'll probably drop in a month or so, when it does I'll add it to the android-fore [project summary](https://github.com/erdo?tab=projects).
 
 # License
 

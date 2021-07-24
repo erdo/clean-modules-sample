@@ -75,6 +75,13 @@ class WeatherModel(
 
             var partialWeatherReport = WeatherReport()
 
+            // that carryOn() extension function has nothing to do with the architecture
+            // of this sample btw, you can do whatever you like here, including using
+            // reactive streams if appropriate, but when you want to expose the calculated
+            // state, you need to: 1) set it, and 2) call notifyObservers().
+            // (If you're interested, the carryOn extension function lets you transparently
+            // handle networking errors at each step, internet search for "andThen"
+            // functions and "railway oriented programming")
             val weatherReport = pollenService.getPollenCounts()
                 .carryOn { pollenCounts ->
                     logger.i("received pollenCounts success")
