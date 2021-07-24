@@ -11,7 +11,9 @@ The typical android clean architecture example you'll find on the internet is on
 
 Once you include reacting to things which aren't triggered by the UI though, things get complicated. Let's say you want your UI to react to a change of network status, or an external accessory being plugged in, or a notification being received to the device (or all of these at the same time). Add Android's infamous lifecycle into the mix, and the abstraction starts to look a little shakey.
 
-The typical solution to this is to turn _everything_ into a reactive stream, and with enough RxJava operators you can of course fix all the caching and memory reference problems - but these are problems that _only exist_ because of choosing an inappropriate abstraction in the first place. Remove Reactive Streams from your android architecture and you remove the problems.
+The typical solution to this is to turn _everything_ into a reactive stream, and with enough RxJava operators you can of course fix all the caching and memory reference problems - but these are problems that _only exist_ because of choosing an inappropriate abstraction in the first place. Remove Reactive Streams from your android architecture and you remove the problems
+
+The UI above is reasonably complex, reactive, supports rotation, handles process death, and of course has no memory leaks. It's a single Activity written in 100 lines of code, and the ViewModel is about 60 lines. A reactive streams implementation is unlikely to match that level of code simplicity, and the situation rapidly deteriorates as you add more things to react to, like network availability, notifications etc.
 
 # How does it work
 
