@@ -1,5 +1,7 @@
 # Clean Architecture (minus Reactive Streams)
 
+There is now a [dev.to](https://dev.to/erdo/clean-architecture-minus-reactive-streams-10i3) post to accompany this repo
+
 Many Android implementations of clean architecture use [Reactive Streams](http://www.reactive-streams.org/) (usually RxJava or Kotlin Flow) to connect architectural layers together. I believe that while Reactive Streams is a fantastic initiative, it is *completely the wrong abstraction* for **architecting android applications** and implementing non-trivial **reactive UIs** (please note, I'm not saying you shouldn't use reactive steams **in Android** there are plenty of good reasons to use reactive streams in general).
 
 Sounds crazy right? Well, take a look at the code, I'd love to hear back if you find a way to improve it further (for me, improvement means: quicker to develop, more robust, easier to understand and maintain, no magic, less boilerplate, thinner UI layer). These are the qualities that let a technique scale for huge mobile app projects IMO.
