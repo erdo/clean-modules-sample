@@ -1,6 +1,6 @@
 package foo.bar.clean.di
 
-import foo.bar.clean.domain.refresher.UpdateModel
+import foo.bar.clean.domain.refresher.RefreshModel
 import foo.bar.clean.domain.mediators.OnRefreshMediator
 import foo.bar.clean.domain.weather.WeatherModel
 import org.koin.dsl.module
@@ -13,7 +13,7 @@ val domainModule = module(override = true) {
      */
 
     single {
-        UpdateModel(
+        RefreshModel(
             get(),
             10000,
             get(),
