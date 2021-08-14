@@ -12,8 +12,8 @@ dependencies {
     // persistence
     implementation("co.early.persista:persista:0.1.1")
     // di
-    implementation("org.koin:koin-android:2.0.1")
-    implementation("org.koin:koin-androidx-viewmodel:2.0.1")
+    implementation("io.insert-koin:koin-android:2.0.1")
+    implementation("io.insert-koin:koin-androidx-viewmodel:2.0.1")
     // android framework
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
