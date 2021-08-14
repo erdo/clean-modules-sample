@@ -18,8 +18,6 @@ import foo.bar.clean.data.api.ktor.services.windspeed.WindSpeedServiceImp
 import foo.bar.clean.domain.weather.PollenService
 import foo.bar.clean.domain.weather.TemperatureService
 import foo.bar.clean.domain.weather.WindSpeedService
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import org.koin.dsl.module
 
 @ExperimentalStdlibApi
@@ -49,7 +47,7 @@ val dataModule = module(override = true) {
     single {
         PerSista(
             dataDirectory = (get() as App).filesDir,
-            logger = ForeDelegateHolder.getLogger()
+            logger = get()
         )
     }
 
@@ -87,10 +85,6 @@ val dataModule = module(override = true) {
 
     single {
         SystemTimeWrapper()
-    }
-
-    single<CoroutineDispatcher> {
-        Dispatchers.Main.immediate
     }
 
     single {

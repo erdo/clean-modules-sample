@@ -16,7 +16,6 @@ val domainModule = module(override = true) {
         RefreshModel(
             onRefreshMediator = get(),
             refreshIntervalMilliSeconds = 10000,
-            dispatcher = get(),
             systemTimeWrapper = get(),
             logger = get()
         )
@@ -31,7 +30,6 @@ val domainModule = module(override = true) {
             pollenService = get(),
             temperatureService = get(),
             windSpeedService = get(),
-            dispatcher = get(),
             perSista = get(),
             logger = get()
         )

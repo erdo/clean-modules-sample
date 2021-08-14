@@ -6,7 +6,10 @@ import co.early.fore.kt.core.Either
 import co.early.fore.kt.core.Either.Left
 import co.early.fore.kt.core.Either.Right
 import co.early.fore.kt.core.carryOn
+import co.early.fore.kt.core.coroutine.asyncCustom
+import co.early.fore.kt.core.coroutine.awaitCustom
 import co.early.fore.kt.core.coroutine.launchCustom
+import co.early.fore.kt.core.delegate.ForeDelegateHolder
 import co.early.fore.kt.core.observer.ObservableImp
 import co.early.persista.PerSista
 import foo.bar.clean.domain.Randomizer
@@ -42,10 +45,11 @@ class WeatherModel(
     private val pollenService: PollenService,
     private val temperatureService: TemperatureService,
     private val windSpeedService: WindSpeedService,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Main.immediate,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val notificationDispatcher: CoroutineDispatcher = Dispatchers.Main.immediate,
     private val perSista: PerSista,
     private val logger: Logger,
-) : Observable by ObservableImp(dispatcher = dispatcher, logger = logger) {
+) : Observable by ObservableImp() {
 
     var currentState = WeatherState(isUpdating = false)
         private set
@@ -62,7 +66,7 @@ class WeatherModel(
      */
     fun fetchWeatherReport() {
 
-        logger.i("fetchWeatherReport()")
+        logger.i("fetchWeatherReport() thread:" + Thread.currentThread().id)
 
         if (currentState.isUpdating) {
             return
@@ -71,7 +75,9 @@ class WeatherModel(
         currentState = currentState.copy(isUpdating = true, error = null)
         notifyObservers()
 
-        launchCustom(dispatcher) {
+        launchCustom(ioDispatcher) {
+
+            logger.i("in scope from $ioDispatcher, thread:" + Thread.currentThread().id)
 
             var partialWeatherReport = WeatherReport()
 
@@ -105,15 +111,28 @@ class WeatherModel(
                     Either.right(partialWeatherReport)
                 }
 
-            perSista.write(
-                when (weatherReport) {
-                    is Right -> WeatherState(weatherReport.b, null, false)
-                    is Left -> WeatherState(error = weatherReport.a, isUpdating = false)
-                }
-            ) {
+            logger.i("requests are all complete, thread:" + Thread.currentThread().id)
+
+            val newState = when (weatherReport) {
+                is Right -> WeatherState(weatherReport.b, null, false)
+                is Left -> WeatherState(error = weatherReport.a, isUpdating = false)
+            }
+
+            perSista.write(newState) {
+                logger.i("after writing to disk, perSista returns to us on the UI thread:" + Thread.currentThread().id)
                 currentState = it
                 notifyObservers()
             }
+
+            /**
+             * if we weren't using perSista to save our state, we would need to
+             * hop to the UI thread manually to safely update our state
+             */
+//            awaitCustom(notificationDispatcher) {
+//                logger.i("jump to the UI thread to update our state, thread:" + Thread.currentThread().id)
+//                currentState = newState
+//                notifyObservers()
+//            }
         }
     }
 }

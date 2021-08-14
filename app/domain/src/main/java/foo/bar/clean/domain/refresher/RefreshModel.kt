@@ -5,7 +5,6 @@ import co.early.fore.core.observer.Observable
 import co.early.fore.core.time.SystemTimeWrapper
 import co.early.fore.kt.core.coroutine.launchCustom
 import co.early.fore.kt.core.observer.ObservableImp
-import co.early.persista.PerSista
 import foo.bar.clean.domain.mediators.OnRefreshMediator
 import kotlinx.coroutines.*
 import kotlin.math.max
@@ -22,10 +21,10 @@ const val ONE_HOUR_MS: Long = ONE_SECOND_MS * 60 * 60
 class RefreshModel(
     private val onRefreshMediator: OnRefreshMediator,
     private val refreshIntervalMilliSeconds: Long,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Main.immediate,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Main,
     private val systemTimeWrapper: SystemTimeWrapper = SystemTimeWrapper(),
     private val logger: Logger,
-) : Observable by ObservableImp(dispatcher = dispatcher, logger = logger) {
+) : Observable by ObservableImp() {
 
     private var job: Job? = null
     private var lastUpdated: Long = 0
