@@ -21,23 +21,22 @@ const val ONE_HOUR_MS: Long = ONE_SECOND_MS * 60 * 60
 @ExperimentalStdlibApi
 class RefreshModel(
     private val onRefreshMediator: OnRefreshMediator,
-    private val updateIntervalMilliSeconds: Long,
+    private val refreshIntervalMilliSeconds: Long,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main.immediate,
     private val systemTimeWrapper: SystemTimeWrapper = SystemTimeWrapper(),
-    private val perSista: PerSista,
     private val logger: Logger,
 ) : Observable by ObservableImp(dispatcher = dispatcher, logger = logger) {
 
     private var job: Job? = null
     private var lastUpdated: Long = 0
-    private val updateIntervalSeconds = (updateIntervalMilliSeconds/ ONE_SECOND_MS).toInt()
+    private val updateIntervalSeconds = (refreshIntervalMilliSeconds/ ONE_SECOND_MS).toInt()
 
     var currentState = RefreshState(0, updateIntervalSeconds, true)
         private set
 
     init {
-        if (updateIntervalMilliSeconds<1 || updateIntervalMilliSeconds> ONE_HOUR_MS) {
-            throw IllegalArgumentException("updateIntervalMilliSeconds must be between 1ms an 1 hour, not:$updateIntervalMilliSeconds ms")
+        if (refreshIntervalMilliSeconds<1 || refreshIntervalMilliSeconds> ONE_HOUR_MS) {
+            throw IllegalArgumentException("updateIntervalMilliSeconds must be between 1ms an 1 hour, not:$refreshIntervalMilliSeconds ms")
         }
     }
 
@@ -55,7 +54,7 @@ class RefreshModel(
 
                 val timeRemaining: Long = max(
                     0,
-                    lastUpdated + updateIntervalMilliSeconds - systemTimeWrapper.currentTimeMillis()
+                    lastUpdated + refreshIntervalMilliSeconds - systemTimeWrapper.currentTimeMillis()
                 ) / ONE_SECOND_MS
 
                 currentState = RefreshState(timeRemaining.toInt(), updateIntervalSeconds, false)

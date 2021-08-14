@@ -18,17 +18,11 @@ class GlobalRequestInterceptor(
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
 
-        val original = chain.request()
-
-        val requestBuilder = original.newBuilder()
-
+        val requestBuilder = chain.request().newBuilder()
 
         requestBuilder.addHeader("Content-Type", "application/json")
         //requestBuilder.addHeader("X-MyApp-Auth-Token", !session.hasSession() ? "expired" : session.getSessionToken());
         requestBuilder.addHeader("User-Agent", "clean-modules-user-agent")
-
-
-        requestBuilder.method(original.method, original.body)
 
         return chain.proceed(requestBuilder.build())
     }

@@ -59,25 +59,25 @@ val dataModule = module(override = true) {
 
     single<TemperatureService> {
         TemperatureServiceImp(
-            TemperatureApi.create(get()),
-            get(),
-            get()
+            client = TemperatureApi.create(get()),
+            processor = get(),
+            logger = get()
         )
     }
 
     single<WindSpeedService> {
         WindSpeedServiceImp(
-            WindSpeedApi.create(get()),
-            get(),
-            get()
+            client = WindSpeedApi.create(get()),
+            processor = get(),
+            logger = get()
         )
     }
 
     single<PollenService> {
         PollenServiceImp(
-            PollenApi.create(get()),
-            get(),
-            get()
+            client = PollenApi.create(get()),
+            processor = get(),
+            logger = get()
         )
     }
 

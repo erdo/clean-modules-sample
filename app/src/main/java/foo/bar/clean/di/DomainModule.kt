@@ -14,12 +14,11 @@ val domainModule = module(override = true) {
 
     single {
         RefreshModel(
-            get(),
-            10000,
-            get(),
-            get(),
-            get(),
-            get()
+            onRefreshMediator = get(),
+            refreshIntervalMilliSeconds = 10000,
+            dispatcher = get(),
+            systemTimeWrapper = get(),
+            logger = get()
         )
     }
 
@@ -29,12 +28,12 @@ val domainModule = module(override = true) {
 
     single {
         WeatherModel(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get()
+            pollenService = get(),
+            temperatureService = get(),
+            windSpeedService = get(),
+            dispatcher = get(),
+            perSista = get(),
+            logger = get()
         )
     }
 }

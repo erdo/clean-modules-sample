@@ -20,6 +20,9 @@ val uiModule = module(override = true) {
      */
 
     viewModel {
-        DashboardViewModel(get(), get())
+        DashboardViewModel(
+            weatherModel = get(),
+            refreshModel = get()
+        )
     }
 }
