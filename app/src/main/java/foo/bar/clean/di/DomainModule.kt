@@ -1,7 +1,7 @@
 package foo.bar.clean.di
 
 import foo.bar.clean.domain.refresher.RefreshModel
-import foo.bar.clean.domain.mediators.OnRefreshMediator
+import foo.bar.clean.domain.refresher.OnRefreshMediator
 import foo.bar.clean.domain.weather.WeatherModel
 import org.koin.dsl.module
 

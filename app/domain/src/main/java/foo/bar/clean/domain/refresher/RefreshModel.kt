@@ -3,9 +3,8 @@ package foo.bar.clean.domain.refresher
 import co.early.fore.kt.core.logging.Logger
 import co.early.fore.core.observer.Observable
 import co.early.fore.core.time.SystemTimeWrapper
-import co.early.fore.kt.core.coroutine.launchCustom
+import co.early.fore.kt.core.coroutine.launchMain
 import co.early.fore.kt.core.observer.ObservableImp
-import foo.bar.clean.domain.mediators.OnRefreshMediator
 import kotlinx.coroutines.*
 import kotlin.math.max
 
@@ -21,7 +20,6 @@ const val ONE_HOUR_MS: Long = ONE_SECOND_MS * 60 * 60
 class RefreshModel(
     private val onRefreshMediator: OnRefreshMediator,
     private val refreshIntervalMilliSeconds: Long,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Main,
     private val systemTimeWrapper: SystemTimeWrapper = SystemTimeWrapper(),
     private val logger: Logger,
 ) : Observable by ObservableImp() {
@@ -43,7 +41,11 @@ class RefreshModel(
 
         logger.i("start()")
 
-        launchCustom(dispatcher) {
+        /**
+         * See the fore sample apps for how to test this code - it's easy.
+         * Or use an unwrapped coroutine here if you have a preferred solution
+         */
+        launchMain {
 
             cancelPreviousJob()
 
@@ -53,7 +55,7 @@ class RefreshModel(
 
                 val timeRemaining: Long = max(
                     0,
-                    lastUpdated + refreshIntervalMilliSeconds - systemTimeWrapper.currentTimeMillis()
+                    lastUpdated + refreshIntervalMilliSeconds - systemTimeWrapper.nanoTime()
                 ) / ONE_SECOND_MS
 
                 currentState = RefreshState(timeRemaining.toInt(), updateIntervalSeconds, false)
@@ -61,8 +63,7 @@ class RefreshModel(
 
                 if (timeRemaining == 0L) {
                     onRefreshMediator.refreshNow()
-                    // should probably use nanoTime here, but it's not a big deal
-                    lastUpdated = systemTimeWrapper.currentTimeMillis()
+                    lastUpdated = systemTimeWrapper.nanoTime()
                 }
             }
         }
@@ -77,7 +78,7 @@ class RefreshModel(
         currentState = RefreshState(0, updateIntervalSeconds, true)
         notifyObservers()
 
-        launchCustom(dispatcher) {
+        launchMain {
             cancelPreviousJob()
         }
     }

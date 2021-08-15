@@ -1,4 +1,4 @@
-package foo.bar.clean.domain.mediators
+package foo.bar.clean.domain.refresher
 
 import foo.bar.clean.domain.weather.WeatherModel
 
