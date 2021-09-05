@@ -5,7 +5,7 @@ dependencies {
     // image loading
     implementation("io.coil-kt:coil:1.2.1")
     // reactivity
-    implementation("co.early.fore:fore-kt:1.4.8")
+    implementation("co.early.fore:fore-kt:1.4.11")
     // network
     implementation("io.ktor:ktor-client-serialization:1.5.2")
     implementation("io.ktor:ktor-client-okhttp:1.5.2")
