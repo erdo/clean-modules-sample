@@ -5,7 +5,7 @@ import co.early.fore.kt.core.logging.Logger
 import co.early.fore.kt.net.ktor.CallProcessorKtor
 import foo.bar.clean.data.api.DataError
 import foo.bar.clean.data.api.toDomain
-import foo.bar.clean.domain.ErrorResolution
+import foo.bar.clean.domain.DomainError
 import foo.bar.clean.domain.weather.WindSpeed
 import foo.bar.clean.domain.weather.WindSpeedService
 
@@ -15,7 +15,7 @@ class WindSpeedServiceImp(
     private val logger: Logger,
 ) : WindSpeedService {
 
-    override suspend fun getWindSpeeds(): Either<ErrorResolution, List<WindSpeed>> {
+    override suspend fun getWindSpeeds(): Either<DomainError, List<WindSpeed>> {
 
         val dataResult = processor.processCallAwait {
             logger.i("processing call t:" + Thread.currentThread())

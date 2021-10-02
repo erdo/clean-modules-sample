@@ -1,9 +1,9 @@
 package foo.bar.clean.data.api
 
-import foo.bar.clean.domain.ErrorResolution
-import foo.bar.clean.domain.ErrorResolution.*
+import foo.bar.clean.domain.DomainError
+import foo.bar.clean.domain.DomainError.*
 
-sealed class DataError(val resolution: ErrorResolution) {
+sealed class DataError(val resolution: DomainError) {
     object Misc: DataError(RETRY_LATER)
     object Network: DataError(CHECK_NETWORK_THEN_RETRY)
     object SecurityUnknown: DataError(CHECK_NETWORK_THEN_RETRY)

@@ -20,7 +20,7 @@ import foo.bar.clean.domain.weather.TemperatureService
 import foo.bar.clean.domain.weather.WindSpeedService
 import org.koin.dsl.module
 
-@ExperimentalStdlibApi
+@OptIn(ExperimentalStdlibApi::class)
 val dataModule = module(override = true) {
 
     /**

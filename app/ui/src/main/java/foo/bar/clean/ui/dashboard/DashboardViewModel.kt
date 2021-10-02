@@ -35,7 +35,7 @@ class DashboardViewModel(
                 timeElapsedPcent = refreshModel.currentState.percentElapsedToNextUpdate(),
                 autoRefreshing = !refreshModel.currentState.updatesPaused
             ),
-            errorResolution = weatherModel.currentState.error,
+            error = weatherModel.currentState.error,
             isUpdating = weatherModel.currentState.isUpdating
         )
 

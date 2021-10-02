@@ -4,7 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import foo.bar.clean.domain.ErrorResolution
+import foo.bar.clean.domain.DomainError
 import foo.bar.clean.domain.weather.PollenLevel
 import foo.bar.clean.ui.R
 
@@ -14,18 +14,18 @@ fun Context.showToast(message: String?) {
     }
 }
 
-fun Context.showToast(message: ErrorResolution?) {
+fun Context.showToast(message: DomainError?) {
     message?.let {
         Toast.makeText(this, message.mapToUserMessage(), Toast.LENGTH_LONG).show()
     }
 }
 
 @StringRes
-fun ErrorResolution.mapToUserMessage(): Int {
+fun DomainError.mapToUserMessage(): Int {
     return when (this) {
-        ErrorResolution.RETRY_LATER -> R.string.err_retry_later
-        ErrorResolution.CHECK_NETWORK_THEN_RETRY -> R.string.err_network
-        ErrorResolution.LOGIN_THEN_RETRY -> R.string.err_session
+        DomainError.RETRY_LATER -> R.string.err_retry_later
+        DomainError.CHECK_NETWORK_THEN_RETRY -> R.string.err_network
+        DomainError.LOGIN_THEN_RETRY -> R.string.err_session
     }
 }
 

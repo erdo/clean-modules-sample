@@ -46,7 +46,7 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
             dashboard_pollenbackground_img,
         )
 
-        setupSyncTriggers()
+        setupTriggers()
     }
 
     override fun syncView() {
@@ -74,13 +74,13 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
 
     /**
      * This is how we bridge the gap between a state based architecture to an event based UI trigger
-     * see here for more details: https://erdo.github.io/android-fore/01-views.html#synctrigger
+     * see here for more details: https://erdo.github.io/android-fore/01-views.html#triggers
      */
-    private fun setupSyncTriggers() {
+    private fun setupTriggers() {
 
         showErrorTrigger = TriggerWhen(
-            triggeredWhen = { viewModel.viewState.errorResolution != null },
-            doThisWhenTriggered = { showToast(viewModel.viewState.errorResolution) }
+            triggeredWhen = { viewModel.viewState.error != null },
+            doThisWhenTriggered = { showToast(viewModel.viewState.error) }
         ).resetRule(ResetRule.IMMEDIATELY)
 
         fadePollenTrigger = TriggerOnChange(

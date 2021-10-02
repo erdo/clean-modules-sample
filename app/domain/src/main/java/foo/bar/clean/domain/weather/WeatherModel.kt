@@ -10,18 +10,18 @@ import co.early.fore.kt.core.coroutine.*
 import co.early.fore.kt.core.observer.ObservableImp
 import co.early.persista.PerSista
 import foo.bar.clean.domain.Randomizer
-import foo.bar.clean.domain.ErrorResolution
+import foo.bar.clean.domain.DomainError
 
 interface PollenService {
-    suspend fun getPollenCounts(): Either<ErrorResolution, List<PollenCount>>
+    suspend fun getPollenCounts(): Either<DomainError, List<PollenCount>>
 }
 
 interface TemperatureService {
-    suspend fun getTemperatures(): Either<ErrorResolution, List<Temperature>>
+    suspend fun getTemperatures(): Either<DomainError, List<Temperature>>
 }
 
 interface WindSpeedService {
-    suspend fun getWindSpeeds(): Either<ErrorResolution, List<WindSpeed>>
+    suspend fun getWindSpeeds(): Either<DomainError, List<WindSpeed>>
 }
 
 /**
