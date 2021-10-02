@@ -35,4 +35,4 @@ dependencies {
     implementation(project(":app:domain"))
 }
 
-apply from: "../android-dependencies.gradle"
+apply from: "../dependencies-android.gradle"

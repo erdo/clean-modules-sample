@@ -35,7 +35,7 @@ interface WindSpeedService {
  *
  * This one is backed by Ktor for network comms (see the data layer)
  */
-@ExperimentalStdlibApi
+@OptIn(ExperimentalStdlibApi::class)
 class WeatherModel(
     private val pollenService: PollenService,
     private val temperatureService: TemperatureService,

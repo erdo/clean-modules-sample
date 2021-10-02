@@ -2,7 +2,7 @@ package foo.bar.clean.domain.refresher
 
 import foo.bar.clean.domain.weather.WeatherModel
 
-@ExperimentalStdlibApi
+
 class OnRefreshMediator(
     private val weatherModel: WeatherModel,
 ) {

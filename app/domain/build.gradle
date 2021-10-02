@@ -13,11 +13,4 @@ compileKotlin.kotlinOptions {
     jvmTarget = "1.8"
 }
 
-dependencies {
-    // persistence
-    implementation("co.early.persista:persista:0.2.1")
-    // reactivity
-    implementation("co.early.fore:fore-kt-core:1.4.11")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
-}
+apply from: "../dependencies-kotlin.gradle"

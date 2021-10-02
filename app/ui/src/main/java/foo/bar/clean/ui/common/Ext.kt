@@ -8,17 +8,21 @@ import foo.bar.clean.domain.ErrorResolution
 import foo.bar.clean.domain.weather.PollenLevel
 import foo.bar.clean.ui.R
 
-fun Context.showToast(message: String) {
-    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+fun Context.showToast(message: String?) {
+    message?.let {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
 }
 
-fun Context.showToast(message: ErrorResolution) {
-    Toast.makeText(this, message.mapToUserMessage(), Toast.LENGTH_LONG).show()
+fun Context.showToast(message: ErrorResolution?) {
+    message?.let {
+        Toast.makeText(this, message.mapToUserMessage(), Toast.LENGTH_LONG).show()
+    }
 }
 
 @StringRes
 fun ErrorResolution.mapToUserMessage(): Int {
-    return when (this){
+    return when (this) {
         ErrorResolution.RETRY_LATER -> R.string.err_retry_later
         ErrorResolution.CHECK_NETWORK_THEN_RETRY -> R.string.err_network
         ErrorResolution.LOGIN_THEN_RETRY -> R.string.err_session

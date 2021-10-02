@@ -5,9 +5,9 @@ import androidx.fragment.app.FragmentActivity
 import co.early.fore.core.ui.SyncableView
 import co.early.fore.kt.core.ui.ForeLifecycleObserver
 import co.early.fore.kt.core.ui.showOrInvisible
-import co.early.fore.kt.core.ui.synctrigger.ResetRule
-import co.early.fore.kt.core.ui.synctrigger.SyncTrigger
-import co.early.fore.kt.core.ui.synctrigger.SyncTriggerKeeper
+import co.early.fore.kt.core.ui.trigger.ResetRule
+import co.early.fore.kt.core.ui.trigger.TriggerOnChange
+import co.early.fore.kt.core.ui.trigger.TriggerWhen
 import foo.bar.clean.domain.weather.PollenLevel
 import foo.bar.clean.ui.R
 import foo.bar.clean.ui.common.prettyPrint
@@ -23,9 +23,9 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
     //models that we need to sync with
     private val viewModel: DashboardViewModel by viewModel()
 
-    private lateinit var showErrorSyncTrigger: SyncTrigger
-    private lateinit var fadePollenSyncTrigger: SyncTriggerKeeper<PollenLevel>
-    private lateinit var rotateWindTurbineSyncTrigger: SyncTriggerKeeper<Int>
+    private lateinit var showErrorTrigger: TriggerWhen
+    private lateinit var fadePollenTrigger: TriggerOnChange<PollenLevel>
+    private lateinit var rotateWindTurbineTrigger: TriggerOnChange<Int>
     private lateinit var animations: DashboardAnimations
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,9 +64,12 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
             diagnostics_viewstate.text = this.prettyPrint()
         }
 
-        showErrorSyncTrigger.checkLazy()
-        fadePollenSyncTrigger.checkLazy()
-        rotateWindTurbineSyncTrigger.check()
+        // this lets us fire one off events from changes of state, you can use your
+        // preferred method, see here for more details:
+        // https://erdo.github.io/android-fore/01-views.html#synctrigger
+        showErrorTrigger.checkLazy()
+        fadePollenTrigger.checkLazy()
+        rotateWindTurbineTrigger.check()
     }
 
     /**
@@ -75,31 +78,18 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
      */
     private fun setupSyncTriggers() {
 
-        showErrorSyncTrigger = SyncTrigger(
+        showErrorTrigger = TriggerWhen(
             triggeredWhen = { viewModel.viewState.errorResolution != null },
-            doThisWhenTriggered = {
-                viewModel.viewState.errorResolution?.let { msg ->
-                    showToast(msg)
-                }
-            }
+            doThisWhenTriggered = { showToast(viewModel.viewState.errorResolution) }
+        ).resetRule(ResetRule.IMMEDIATELY)
+
+        fadePollenTrigger = TriggerOnChange(
+            currentState = { viewModel.viewState.weather.pollenLevel },
+            doThisWhenTriggered = { animations.animatePollenChange() }
         )
 
-        fadePollenSyncTrigger = SyncTriggerKeeper<PollenLevel>(
-            triggeredWhen = { keeper ->
-                keeper.swap { viewModel.viewState.weather.pollenLevel }
-            },
-            doThisWhenTriggered = {
-                animations.animatePollenChange()
-            }
-        ).resetRule(ResetRule.IMMEDIATELY)
-
-        rotateWindTurbineSyncTrigger = SyncTriggerKeeper<Int>(
-            triggeredWhen = { keeper ->
-                keeper.swap { viewModel.viewState.weather.windSpeedKmpH }
-            },
-            doThisWhenTriggered = {
-                animations.animateWindSpeedChange(viewModel.viewState.weather.windSpeedPercent())
-            }
-        ).resetRule(ResetRule.IMMEDIATELY)
+        rotateWindTurbineTrigger = TriggerOnChange({ viewModel.viewState.weather.windSpeedKmpH }) {
+            animations.animateWindSpeedChange(viewModel.viewState.weather.windSpeedPercent())
+        }
     }
 }

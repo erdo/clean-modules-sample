@@ -6,7 +6,6 @@ import foo.bar.clean.domain.refresher.RefreshModel
 import foo.bar.clean.domain.weather.WeatherModel
 import foo.bar.clean.ui.common.BaseViewModel
 
-@ExperimentalStdlibApi
 class DashboardViewModel(
     private val weatherModel: WeatherModel,
     private val refreshModel: RefreshModel,
@@ -22,6 +21,7 @@ class DashboardViewModel(
         syncView()
     }
 
+    // this gets called whenever our domain models' state changes
     override fun syncView() {
 
         viewState = DashboardViewState(

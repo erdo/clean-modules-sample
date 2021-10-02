@@ -1,0 +1,9 @@
+dependencies {
+    // persistence
+    implementation("co.early.persista:persista:0.2.1")
+    // reactivity
+    implementation("co.early.fore:fore-kt-core:1.5.0-alpha02")
+    implementation("co.early.fore:fore-kt-network:1.5.0-alpha02")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
+}

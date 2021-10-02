@@ -16,8 +16,8 @@ const val ONE_HOUR_MS: Long = ONE_SECOND_MS * 60 * 60
  *
  * It has a state that indicates the time remaining before the next update
  */
-@ExperimentalStdlibApi
-class RefreshModel(
+@OptIn(ExperimentalStdlibApi::class)
+class RefreshModel constructor(
     private val onRefreshMediator: OnRefreshMediator,
     private val refreshIntervalMilliSeconds: Long,
     private val systemTimeWrapper: SystemTimeWrapper = SystemTimeWrapper(),
