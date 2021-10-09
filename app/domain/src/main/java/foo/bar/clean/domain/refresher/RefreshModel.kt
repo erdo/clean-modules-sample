@@ -50,20 +50,26 @@ class RefreshModel constructor(
             cancelPreviousJob()
 
             lastUpdated = 0
+            var firstRun = true
 
             job = periodicAsync(ONE_SECOND_MS) {
 
                 val timeRemaining: Long = max(
                     0,
-                    lastUpdated + refreshIntervalMilliSeconds - systemTimeWrapper.nanoTime()
+                    lastUpdated + refreshIntervalMilliSeconds - systemTimeWrapper.currentTimeMillis()
                 ) / ONE_SECOND_MS
 
-                currentState = RefreshState(timeRemaining.toInt(), updateIntervalSeconds, false)
+                currentState = RefreshState(
+                    timeToNextUpdateSeconds = if (firstRun) updateIntervalSeconds else timeRemaining.toInt(),
+                    updateIntervalSeconds = updateIntervalSeconds,
+                    updatesPaused = false)
                 notifyObservers()
+
+                firstRun = false
 
                 if (timeRemaining == 0L) {
                     onRefreshMediator.refreshNow()
-                    lastUpdated = systemTimeWrapper.nanoTime()
+                    lastUpdated = systemTimeWrapper.currentTimeMillis()
                 }
             }
         }

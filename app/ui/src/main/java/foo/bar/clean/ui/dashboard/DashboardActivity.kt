@@ -81,7 +81,7 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
         showErrorTrigger = TriggerWhen(
             triggeredWhen = { viewModel.viewState.error != null },
             doThisWhenTriggered = { showToast(viewModel.viewState.error) }
-        ).resetRule(ResetRule.IMMEDIATELY)
+        ).resetRule(ResetRule.ONLY_AFTER_REVERSION)
 
         fadePollenTrigger = TriggerOnChange(
             currentState = { viewModel.viewState.weather.pollenLevel },
