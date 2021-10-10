@@ -1,5 +1,5 @@
 
-rootProject.name = "clean"
+rootProject.name = "clean-sample"
 
 include ':app'
 include ':app:data'
