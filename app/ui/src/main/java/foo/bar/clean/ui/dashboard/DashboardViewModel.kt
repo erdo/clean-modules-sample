@@ -1,24 +1,24 @@
 package foo.bar.clean.ui.dashboard
 
-import co.early.fore.core.observer.Observable
-import co.early.fore.kt.core.observer.ObservableImp
+import androidx.lifecycle.ViewModel
+import co.early.fore.core.ui.SyncableView
+import co.early.fore.kt.core.ui.ViewModelObservability
+import co.early.fore.kt.core.ui.ViewModelObservabilityImp
 import foo.bar.clean.domain.refresher.RefreshModel
 import foo.bar.clean.domain.weather.WeatherModel
-import foo.bar.clean.ui.common.BaseViewModel
 
 class DashboardViewModel(
     private val weatherModel: WeatherModel,
     private val refreshModel: RefreshModel,
-) : BaseViewModel(
-    weatherModel,
-    refreshModel,
-), Observable by ObservableImp() {
+) : ViewModel(), SyncableView, ViewModelObservability by ViewModelObservabilityImp(
+    weatherModel, refreshModel
+) {
 
     var viewState = DashboardViewState()
         private set
 
     init {
-        syncView()
+        initSyncableView(this)
     }
 
     // this gets called whenever our domain models' state changes
