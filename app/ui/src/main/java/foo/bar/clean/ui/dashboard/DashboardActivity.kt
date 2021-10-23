@@ -3,7 +3,7 @@ package foo.bar.clean.ui.dashboard
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import co.early.fore.core.ui.SyncableView
-import co.early.fore.kt.core.ui.ForeLifecycleObserver
+import co.early.fore.kt.core.ui.LifecycleObserver
 import co.early.fore.kt.core.ui.showOrInvisible
 import co.early.fore.kt.core.ui.trigger.ResetRule
 import co.early.fore.kt.core.ui.trigger.TriggerOnChange
@@ -32,7 +32,7 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
         super.onCreate(savedInstanceState)
 
         //setup observers
-        lifecycle.addObserver(ForeLifecycleObserver(this, viewModel))
+        lifecycle.addObserver(LifecycleObserver(this, viewModel))
 
         //set up click listeners
         dashboard_startautorefresh_btn.setOnClickListener { viewModel.startAutoRefresh() }

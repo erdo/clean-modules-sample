@@ -10,7 +10,7 @@ dependencies {
     implementation("io.ktor:ktor-client-serialization:1.5.2")
     implementation("io.ktor:ktor-client-okhttp:1.5.2")
     // persistence
-    implementation("co.early.persista:persista:0.2.1")
+    implementation("co.early.persista:persista:0.2.2")
     // di
     implementation("io.insert-koin:koin-android:2.0.1")
     implementation("io.insert-koin:koin-androidx-viewmodel:2.0.1")
