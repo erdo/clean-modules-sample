@@ -4,7 +4,7 @@ There is now a [dev.to](https://dev.to/erdo/clean-architecture-minus-reactive-st
 
 Many Android implementations of clean architecture use [Reactive Streams](http://www.reactive-streams.org/) (usually RxJava or Kotlin Flow) to connect architectural layers together. I believe that while Reactive Streams is a fantastic initiative, it is *completely the wrong abstraction* for **architecting android applications** and implementing non-trivial **reactive UIs** (please note, I'm not saying you shouldn't use reactive steams **in Android** there are plenty of good reasons to use reactive streams in general).
 
-Sounds crazy right? Well, take a look at the code, I'd love to hear back if you find a way to improve it further (for me, improvement means: quicker to develop, more robust, easier to understand and maintain, no magic, less boilerplate, thinner UI layer). These are the qualities that let a technique scale for huge mobile app projects IMO.
+The aim of this sample is to showcase an implemention of clean architeture which is: quicker to develop, more robust, easier to understand and maintain, has no magic, has less boilerplate, and a thinner UI layer. These are the qualities that let a technique scale for huge mobile app projects, and if you find any way to improve on the qualities listed, please open an issue or open a PR with suggested improvements.
 
 ![screen shot of sample](clean_modules_screenshot.png)
 ![video of sample](clean-modules-vid.gif)
@@ -16,6 +16,8 @@ Once you include reacting to things which aren't triggered by the UI though, thi
 The typical solution to this is to turn _everything_ into a reactive stream, and with enough RxJava operators you can of course fix all the caching and memory reference problems - but these are problems that _only exist_ because of choosing an inappropriate abstraction in the first place. Remove Reactive Streams from your android architecture and you remove the problems
 
 The UI above is reasonably complex, reactive, supports rotation, handles process death, and of course has no memory leaks. It's a single Activity written in 100 lines of code, and the ViewModel is about 60 lines. A reactive streams implementation is unlikely to match that level of code simplicity, and the situation rapidly deteriorates as you add more things to react to, like network availability, notifications etc.
+
+You can read more about how to tie architectural layers in this way in the [fore docs](https://erdo.github.io/android-fore/00-architecture.html#shoom)
 
 # How does it work
 
