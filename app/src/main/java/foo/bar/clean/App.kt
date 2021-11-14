@@ -3,12 +3,10 @@ package foo.bar.clean
 import androidx.multidex.MultiDexApplication
 import clean.BuildConfig
 import co.early.fore.kt.core.delegate.DebugDelegateDefault
-import co.early.fore.kt.core.delegate.ForeDelegateHolder
-import co.early.persista.PerSista
+import co.early.fore.kt.core.delegate.Fore
 import foo.bar.clean.di.dataModule
 import foo.bar.clean.di.domainModule
 import foo.bar.clean.di.uiModule
-import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -25,7 +23,7 @@ class App : MultiDexApplication() {
         inst = this
 
         if (BuildConfig.DEBUG) {
-            ForeDelegateHolder.setDelegate(DebugDelegateDefault(tagPrefix = "clean_"))
+            Fore.setDelegate(DebugDelegateDefault(tagPrefix = "clean_"))
         }
 
         startKoin {
