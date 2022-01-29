@@ -16,13 +16,4 @@ sealed class DataError(val resolution: DomainError) {
     object LaunchServiceSaysNo: DataError(RETRY_LATER)
     object WeatherUserLocked: DataError(RETRY_LATER)
     object WeatherLoginIncorrect: DataError(LOGIN_THEN_RETRY)
-
-    companion object {
-        fun createFromName(label: String?): DataError {
-            return when (label) {
-                "rate_limit" -> RateLimited
-                else -> Misc
-            }
-        }
-    }
 }
