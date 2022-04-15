@@ -5,6 +5,8 @@ import co.early.fore.core.observer.Observable
 import co.early.fore.kt.core.Either
 import co.early.fore.kt.core.Either.Left
 import co.early.fore.kt.core.Either.Right
+import co.early.fore.kt.core.Error
+import co.early.fore.kt.core.Success
 import co.early.fore.kt.core.carryOn
 import co.early.fore.kt.core.coroutine.*
 import co.early.fore.kt.core.observer.ObservableImp
@@ -109,14 +111,14 @@ class WeatherModel(
                     partialWeatherReport = partialWeatherReport.copy(
                         windSpeed = Randomizer.choose(windSpeeds) ?: WindSpeed()
                     )
-                    Either.right(partialWeatherReport)
+                    eitherSuccess(partialWeatherReport)
                 }
 
             logger.i("requests are all complete, thread:" + Thread.currentThread().id)
 
             val newState = when (weatherReport) {
-                is Right -> WeatherState(weatherReport.b, null, false)
-                is Left -> WeatherState(error = weatherReport.a, isUpdating = false)
+                is Success -> WeatherState(weatherReport.b, null, false)
+                is Error -> WeatherState(error = weatherReport.a, isUpdating = false)
             }
 
             perSista.write(newState) { saved ->
@@ -137,3 +139,6 @@ class WeatherModel(
         }
     }
 }
+
+fun <R> eitherSuccess(value: R): Either<Nothing, R> = Either.right(value)
+fun <L> eitherError(value: L): Either<L, Nothing> = Either.left(value)

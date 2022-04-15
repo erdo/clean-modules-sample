@@ -1,17 +1,15 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'maven'
-apply plugin: 'idea'
 
 android {
-    compileSdkVersion = 30
-    buildToolsVersion = "30.0.3"
+    compileSdkVersion = 31
+    buildToolsVersion = "31.0.0"
 
     defaultConfig {
         applicationId = "foo.bar.clean"
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode = 1
         versionName = "1.0"
         multiDexEnabled = true
@@ -48,7 +46,7 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test:rules:1.4.0")
     androidTestImplementation("androidx.test.ext:junit-ktx:1.1.3")
-    androidTestImplementation("androidx.annotation:annotation:1.2.0")
+    androidTestImplementation("androidx.annotation:annotation:1.3.0")
 }
 
 apply from: "dependencies-android.gradle"
