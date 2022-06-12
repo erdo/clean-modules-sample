@@ -5,8 +5,7 @@ import foo.bar.clean.domain.refresher.OnRefreshMediator
 import foo.bar.clean.domain.weather.WeatherModel
 import org.koin.dsl.module
 
-@ExperimentalStdlibApi
-val domainModule = module(override = true) {
+val domainModule = module {
 
     /**
      * Models and Mediators

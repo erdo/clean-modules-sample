@@ -2,14 +2,13 @@ package foo.bar.clean.domain.weather
 
 import co.early.fore.kt.core.logging.Logger
 import co.early.fore.core.observer.Observable
-import co.early.fore.kt.core.Either
-import co.early.fore.kt.core.Either.Left
-import co.early.fore.kt.core.Either.Right
-import co.early.fore.kt.core.Error
-import co.early.fore.kt.core.Success
-import co.early.fore.kt.core.carryOn
+import co.early.fore.kt.core.type.Either
+import co.early.fore.kt.core.type.Either.Success
 import co.early.fore.kt.core.coroutine.*
 import co.early.fore.kt.core.observer.ObservableImp
+import co.early.fore.kt.core.type.Either.Companion.success
+import co.early.fore.kt.core.type.Either.Fail
+import co.early.fore.kt.core.type.carryOn
 import co.early.persista.PerSista
 import foo.bar.clean.domain.Randomizer
 import foo.bar.clean.domain.DomainError
@@ -37,7 +36,6 @@ interface WindSpeedService {
  *
  * This one is backed by Ktor for network comms (see the data layer)
  */
-@OptIn(ExperimentalStdlibApi::class)
 class WeatherModel(
     private val pollenService: PollenService,
     private val temperatureService: TemperatureService,
@@ -111,14 +109,14 @@ class WeatherModel(
                     partialWeatherReport = partialWeatherReport.copy(
                         windSpeed = Randomizer.choose(windSpeeds) ?: WindSpeed()
                     )
-                    eitherSuccess(partialWeatherReport)
+                    success(partialWeatherReport)
                 }
 
             logger.i("requests are all complete, thread:" + Thread.currentThread().id)
 
             val newState = when (weatherReport) {
-                is Success -> WeatherState(weatherReport.b, null, false)
-                is Error -> WeatherState(error = weatherReport.a, isUpdating = false)
+                is Success -> WeatherState(weatherReport.value, null, false)
+                is Fail -> WeatherState(error = weatherReport.value, isUpdating = false)
             }
 
             perSista.write(newState) { saved ->
@@ -139,6 +137,3 @@ class WeatherModel(
         }
     }
 }
-
-fun <R> eitherSuccess(value: R): Either<Nothing, R> = Either.right(value)
-fun <L> eitherError(value: L): Either<L, Nothing> = Either.left(value)

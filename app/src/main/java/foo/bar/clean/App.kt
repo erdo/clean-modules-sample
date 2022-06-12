@@ -14,7 +14,6 @@ import org.koin.core.context.startKoin
 /**
  * Copyright © 2019 early.co. All rights reserved.
  */
-@ExperimentalStdlibApi
 class App : MultiDexApplication() {
 
     override fun onCreate() {
@@ -29,7 +28,7 @@ class App : MultiDexApplication() {
         startKoin {
             if (BuildConfig.DEBUG) {
                 // Use Koin Android Logger
-                androidLogger()
+                // androidLogger() TODO once koin fixes it's time problems with kotlin, uncomment this
             }
             // declare Android context
             androidContext(this@App)
@@ -41,6 +40,7 @@ class App : MultiDexApplication() {
                     uiModule
                 )
             )
+            allowOverride(true)
         }
 
         init()

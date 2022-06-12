@@ -1,9 +1,9 @@
 package foo.bar.clean.di
 
 import co.early.fore.core.time.SystemTimeWrapper
-import co.early.fore.kt.core.delegate.ForeDelegateHolder
+import co.early.fore.kt.core.delegate.Fore
 import co.early.fore.kt.net.InterceptorLogging
-import co.early.fore.kt.net.ktor.CallProcessorKtor
+import co.early.fore.kt.net.ktor.CallWrapperKtor
 import co.early.persista.PerSista
 import foo.bar.clean.App
 import foo.bar.clean.data.api.ktor.CustomKtorBuilder
@@ -20,8 +20,7 @@ import foo.bar.clean.domain.weather.TemperatureService
 import foo.bar.clean.domain.weather.WindSpeedService
 import org.koin.dsl.module
 
-@OptIn(ExperimentalStdlibApi::class)
-val dataModule = module(override = true) {
+val dataModule = module {
 
     /**
      * Ktor
@@ -35,7 +34,7 @@ val dataModule = module(override = true) {
     }
 
     single {
-        CallProcessorKtor(
+        CallWrapperKtor(
             ErrorHandler(get())
         )
     }
@@ -58,7 +57,7 @@ val dataModule = module(override = true) {
     single<TemperatureService> {
         TemperatureServiceImp(
             client = TemperatureApi.create(get()),
-            processor = get(),
+            wrapper = get(),
             logger = get()
         )
     }
@@ -66,7 +65,7 @@ val dataModule = module(override = true) {
     single<WindSpeedService> {
         WindSpeedServiceImp(
             client = WindSpeedApi.create(get()),
-            processor = get(),
+            wrapper = get(),
             logger = get()
         )
     }
@@ -74,7 +73,7 @@ val dataModule = module(override = true) {
     single<PollenService> {
         PollenServiceImp(
             client = PollenApi.create(get()),
-            processor = get(),
+            wrapper = get(),
             logger = get()
         )
     }
@@ -88,6 +87,6 @@ val dataModule = module(override = true) {
     }
 
     single {
-        ForeDelegateHolder.getLogger()
+        Fore.getLogger()
     }
 }

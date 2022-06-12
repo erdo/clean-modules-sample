@@ -1,6 +1,6 @@
 package foo.bar.clean.data.api.ktor
 
-import co.early.fore.kt.core.delegate.ForeDelegateHolder
+import co.early.fore.kt.core.delegate.Fore
 import co.early.fore.kt.core.logging.Logger
 import co.early.fore.kt.net.ktor.ErrorHandler
 import co.early.fore.net.MessageProvider
@@ -28,7 +28,7 @@ class ErrorHandler(private val logWrapper: Logger? = null) : ErrorHandler<DataEr
             customErrorClazz: Class<CE>?
     ): DataError {
 
-        ForeDelegateHolder.getLogger(logWrapper).d("handling error in global error handler", t)
+        Fore.getLogger(logWrapper).d("handling error in global error handler", t)
 
         val errorMessage = when (t) {
 
@@ -44,7 +44,7 @@ class ErrorHandler(private val logWrapper: Logger? = null) : ErrorHandler<DataEr
 
                 val response = t.response
 
-                ForeDelegateHolder.getLogger(logWrapper).e("handleError() HTTP:" + response.status)
+                Fore.getLogger(logWrapper).e("handleError() HTTP:" + response.status)
 
                 //get more specific with the error type
                 msg = when (response.status.value) {
@@ -69,7 +69,7 @@ class ErrorHandler(private val logWrapper: Logger? = null) : ErrorHandler<DataEr
             else -> Network
         }
 
-        ForeDelegateHolder.getLogger(logWrapper).d("replyWithFailure() returning:$errorMessage")
+        Fore.getLogger(logWrapper).d("replyWithFailure() returning:$errorMessage")
         return errorMessage
     }
 
@@ -85,24 +85,24 @@ class ErrorHandler(private val logWrapper: Logger? = null) : ErrorHandler<DataEr
         try {
 
             val bodyContent = errorResponse.readText(Charsets.UTF_8)
-            ForeDelegateHolder.getLogger(logWrapper).d("parseCustomError() attempting to parse this content:\n $bodyContent")
+            Fore.getLogger(logWrapper).d("parseCustomError() attempting to parse this content:\n $bodyContent")
             val errorClass = Json.decodeFromString(serializer(customErrorClazz), bodyContent) as CE
             customError = errorClass.message
 
         } catch (t: Throwable) {
 
-            ForeDelegateHolder.getLogger(logWrapper).e("parseCustomError() unexpected issue" + t)
+            Fore.getLogger(logWrapper).e("parseCustomError() unexpected issue" + t)
 
             when (t) {
-                is IllegalStateException, is CoderMalfunctionError -> {ForeDelegateHolder.getLogger(logWrapper).e("01")} //problem reading body text
-                is SerializationException -> {ForeDelegateHolder.getLogger(logWrapper).e("02")} //parsing error, @Serializable missing, wrong error class specified etc
-                is UnsupportedEncodingException -> {ForeDelegateHolder.getLogger(logWrapper).e("03")}
-                is NullPointerException -> {ForeDelegateHolder.getLogger(logWrapper).e("04")}
-                else -> {ForeDelegateHolder.getLogger(logWrapper).e("05")}
+                is IllegalStateException, is CoderMalfunctionError -> {Fore.getLogger(logWrapper).e("01")} //problem reading body text
+                is SerializationException -> {Fore.getLogger(logWrapper).e("02")} //parsing error, @Serializable missing, wrong error class specified etc
+                is UnsupportedEncodingException -> {Fore.getLogger(logWrapper).e("03")}
+                is NullPointerException -> {Fore.getLogger(logWrapper).e("04")}
+                else -> {Fore.getLogger(logWrapper).e("05")}
             }
         }
 
-        ForeDelegateHolder.getLogger(logWrapper).d("parseCustomError() returning:$customError")
+        Fore.getLogger(logWrapper).d("parseCustomError() returning:$customError")
         return customError
     }
 }
