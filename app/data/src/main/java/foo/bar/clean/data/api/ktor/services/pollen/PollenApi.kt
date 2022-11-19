@@ -2,6 +2,7 @@ package foo.bar.clean.data.api.ktor.services.pollen
 
 import foo.bar.clean.domain.weather.PollenLevel
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.serialization.Serializable
 
@@ -19,7 +20,7 @@ data class PollenApi(
         fun create(httpClient: HttpClient): PollenApi {
             val baseUrl = "https://run.mocky.io/v3/"
             return PollenApi(
-                getPollenCountReadings = { httpClient.get("${baseUrl}2c43bf76-1a3b-4601-953f-ab4b6a68c6e0/?mocky-delay=1s") },
+                getPollenCountReadings = { httpClient.get("${baseUrl}2c43bf76-1a3b-4601-953f-ab4b6a68c6e0/?mocky-delay=1s").body() },
             )
         }
     }

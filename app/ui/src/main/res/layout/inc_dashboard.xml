@@ -8,14 +8,14 @@
     android:padding="10dp">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/dashboard_updating_guideline"
+        android:id="@+id/updating_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="50dp" />
 
     <TextView
-        android:id="@+id/dashboard_updating_text"
+        android:id="@+id/updating_text"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="10dp"
@@ -23,13 +23,13 @@
         android:textAlignment="center"
         android:textColor="@color/colorAccent"
         android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="@+id/dashboard_updating_guideline"
+        app:layout_constraintBottom_toBottomOf="@+id/updating_guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <foo.bar.clean.ui.common.widget.PercentPie
-        android:id="@+id/dashboard_update_countdown"
+        android:id="@+id/update_countdown"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginBottom="10dp"
@@ -39,7 +39,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
-        android:id="@+id/dashboard_busy"
+        android:id="@+id/busy"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginBottom="10dp"
@@ -48,85 +48,85 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/dashboard_tempscale_img"
+        android:id="@+id/tempscale_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:importantForAccessibility="no"
         android:src="@drawable/temp_scale"
-        app:layout_constraintEnd_toStartOf="@+id/dashboard_tempbackground"
+        app:layout_constraintEnd_toStartOf="@+id/tempbackground"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dashboard_updating_guideline" />
+        app:layout_constraintTop_toBottomOf="@+id/updating_guideline" />
 
     <ImageView
-        android:id="@+id/dashboard_tempbackground"
+        android:id="@+id/tempbackground"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="temperature dial"
         android:src="@drawable/temp_background"
-        app:layout_constraintEnd_toStartOf="@+id/dashboard_tempmaxmin"
-        app:layout_constraintStart_toEndOf="@+id/dashboard_tempscale_img"
-        app:layout_constraintTop_toBottomOf="@+id/dashboard_updating_guideline" />
+        app:layout_constraintEnd_toStartOf="@+id/tempmaxmin"
+        app:layout_constraintStart_toEndOf="@+id/tempscale_img"
+        app:layout_constraintTop_toBottomOf="@+id/updating_guideline" />
 
     <ImageView
-        android:id="@+id/dashboard_tempunit_img"
+        android:id="@+id/tempunit_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:importantForAccessibility="no"
         android:src="@drawable/temp_units"
-        app:layout_constraintStart_toStartOf="@+id/dashboard_tempscale_img"
-        app:layout_constraintTop_toBottomOf="@+id/dashboard_tempscale_img" />
+        app:layout_constraintStart_toStartOf="@+id/tempscale_img"
+        app:layout_constraintTop_toBottomOf="@+id/tempscale_img" />
 
     <foo.bar.clean.ui.common.widget.MaxMinIndicator
-        android:id="@+id/dashboard_tempmaxmin"
+        android:id="@+id/tempmaxmin"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
         android:importantForAccessibility="no"
-        app:layout_constraintBottom_toTopOf="@+id/dashboard_tempunit_img"
-        app:layout_constraintEnd_toStartOf="@+id/dashboard_windturbine_img"
-        app:layout_constraintStart_toEndOf="@+id/dashboard_tempbackground"
-        app:layout_constraintTop_toTopOf="@+id/dashboard_tempbackground" />
+        app:layout_constraintBottom_toTopOf="@+id/tempunit_img"
+        app:layout_constraintEnd_toStartOf="@+id/windturbine_img"
+        app:layout_constraintStart_toEndOf="@+id/tempbackground"
+        app:layout_constraintTop_toTopOf="@+id/tempbackground" />
 
     <ImageView
-        android:id="@+id/dashboard_windturbine_img"
+        android:id="@+id/windturbine_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="wind dial"
         android:src="@drawable/wind_turbine"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/dashboard_tempmaxmin"
-        app:layout_constraintTop_toBottomOf="@+id/dashboard_updating_guideline" />
+        app:layout_constraintStart_toEndOf="@+id/tempmaxmin"
+        app:layout_constraintTop_toBottomOf="@+id/updating_guideline" />
 
     <ImageView
-        android:id="@+id/dashboard_pollenbackground_img"
+        android:id="@+id/pollenbackground_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:importantForAccessibility="no"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
         android:src="@drawable/pollen_background_grass"
-        app:layout_constraintBottom_toBottomOf="@+id/dashboard_tempunit_img"
-        app:layout_constraintCircle="@+id/dashboard_windturbine_img"
+        app:layout_constraintBottom_toBottomOf="@+id/tempunit_img"
+        app:layout_constraintCircle="@+id/windturbine_img"
         app:layout_constraintCircleAngle="180"
         app:layout_constraintCircleRadius="80dp" />
 
     <ImageView
-        android:id="@+id/dashboard_pollenlevel_img"
+        android:id="@+id/pollenlevel_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="pollen dial"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
         android:src="@drawable/pollen_high"
-        app:layout_constraintBottom_toBottomOf="@+id/dashboard_tempunit_img"
-        app:layout_constraintCircle="@+id/dashboard_windturbine_img"
+        app:layout_constraintBottom_toBottomOf="@+id/tempunit_img"
+        app:layout_constraintCircle="@+id/windturbine_img"
         app:layout_constraintCircleAngle="180"
         app:layout_constraintCircleRadius="80dp" />
 
     <TextView
-        android:id="@+id/dashboard_intro_text"
+        android:id="@+id/intro_text"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:layout_margin="20dp"
@@ -136,36 +136,36 @@
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dashboard_tempunit_img" />
+        app:layout_constraintTop_toBottomOf="@id/tempunit_img" />
 
     <Button
-        android:id="@+id/dashboard_updatenow_btn"
+        android:id="@+id/updatenow_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="30dp"
         android:padding="10dp"
         android:text="update\nnow"
-        app:layout_constraintEnd_toStartOf="@+id/dashboard_startautorefresh_btn"
+        app:layout_constraintEnd_toStartOf="@+id/startautorefresh_btn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dashboard_intro_text" />
+        app:layout_constraintTop_toBottomOf="@+id/intro_text" />
 
     <Button
-        android:id="@+id/dashboard_startautorefresh_btn"
+        android:id="@+id/startautorefresh_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:padding="10dp"
         android:text="start\nauto\nrefresh"
-        app:layout_constraintEnd_toStartOf="@+id/dashboard_stopautorefresh_btn"
+        app:layout_constraintEnd_toStartOf="@+id/stopautorefresh_btn"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/dashboard_updatenow_btn"
-        app:layout_constraintTop_toBottomOf="@+id/dashboard_intro_text" />
+        app:layout_constraintStart_toEndOf="@+id/updatenow_btn"
+        app:layout_constraintTop_toBottomOf="@+id/intro_text" />
 
     <Button
-        android:id="@+id/dashboard_stopautorefresh_btn"
+        android:id="@+id/stopautorefresh_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -174,7 +174,7 @@
         android:text="stop\nauto\nrefresh"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/dashboard_startautorefresh_btn"
-        app:layout_constraintTop_toBottomOf="@+id/dashboard_intro_text" />
+        app:layout_constraintStart_toEndOf="@+id/startautorefresh_btn"
+        app:layout_constraintTop_toBottomOf="@+id/intro_text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

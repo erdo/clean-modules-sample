@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import foo.bar.clean.ui.R
 import kotlin.math.min
 
+@Suppress("DEPRECATION")
 class PercentPie @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

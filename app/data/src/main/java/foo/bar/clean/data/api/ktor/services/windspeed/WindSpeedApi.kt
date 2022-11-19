@@ -1,6 +1,7 @@
 package foo.bar.clean.data.api.ktor.services.windspeed
 
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.serialization.Serializable
 
@@ -18,7 +19,7 @@ data class WindSpeedApi(
         fun create(httpClient: HttpClient): WindSpeedApi {
             val baseUrl = "https://run.mocky.io/v3/"
             return WindSpeedApi(
-                getWindSpeedReadings = { httpClient.get("${baseUrl}60e00580-b683-4193-9cb3-856743f7863a/?mocky-delay=1s") },
+                getWindSpeedReadings = { httpClient.get("${baseUrl}60e00580-b683-4193-9cb3-856743f7863a/?mocky-delay=1s").body() },
             )
         }
     }

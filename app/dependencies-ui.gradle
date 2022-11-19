@@ -1,0 +1,15 @@
+dependencies {
+    // image loading
+    implementation("io.coil-kt:coil:1.2.1")
+    // reactivity
+    implementation("co.early.fore:fore-kt-android:$fore_version")
+    // di
+    implementation("io.insert-koin:koin-android:$koin_version")
+    // android framework
+    implementation("androidx.multidex:multidex:2.0.1")
+    implementation("androidx.appcompat:appcompat:1.5.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.annotation:annotation:1.5.0")
+}

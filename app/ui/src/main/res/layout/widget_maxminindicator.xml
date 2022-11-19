@@ -4,14 +4,14 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/maxmin_max"
+        android:id="@+id/max"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/temp_max_indicator"
         android:layout_gravity="bottom"/>
 
     <ImageView
-        android:id="@+id/maxmin_min"
+        android:id="@+id/min"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/temp_min_indicator"

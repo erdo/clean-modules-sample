@@ -13,4 +13,5 @@ compileKotlin.kotlinOptions {
     jvmTarget = "1.8"
 }
 
-apply from: "../dependencies-kotlin.gradle"
+apply from: "../dependencies-domain.gradle"
+apply from: "../dependencies-common.gradle"

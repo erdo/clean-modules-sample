@@ -1,0 +1,10 @@
+dependencies {
+    // network wrapper
+    implementation("co.early.fore:fore-kt-android:$fore_version")
+    // network
+    implementation("io.ktor:ktor-client-okhttp:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    // di
+    implementation("io.insert-koin:koin-android:$koin_version")
+}

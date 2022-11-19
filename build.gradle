@@ -7,23 +7,20 @@
  * ./gradlew app:dependencies --configuration releaseRuntimeClasspath
  */
 buildscript {
-    ext.kotlin_version = "1.6.21"
+
+    ext.kotlin_version = "1.7.10"
+    ext.fore_version = "1.5.18"
+    ext.ktor_version = "2.0.3"
+    ext.koin_version = "3.1.5"
+
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.1'
+        classpath 'com.android.tools.build:gradle:7.3.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
-    }
-}
-
-allprojects {
-    repositories {
-        mavenLocal()
-        google()
-        mavenCentral()
     }
 }
 

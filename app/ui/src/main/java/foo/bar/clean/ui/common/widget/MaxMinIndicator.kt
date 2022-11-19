@@ -10,7 +10,7 @@ import android.widget.FrameLayout
 import foo.bar.clean.ui.R
 import foo.bar.clean.ui.common.anim.CustomEasing
 import foo.bar.clean.ui.common.anim.allowAnimationOutsideParent
-import kotlinx.android.synthetic.main.widget_maxminindicator.view.*
+import foo.bar.clean.ui.databinding.WidgetMaxminindicatorBinding
 
 class MaxMinIndicator @JvmOverloads constructor(
     context: Context,
@@ -27,11 +27,15 @@ class MaxMinIndicator @JvmOverloads constructor(
     private val animDurationMax: Long = 1000
     private val animDurationMin: Long = 1200
 
+    private val maxMinBinding: WidgetMaxminindicatorBinding
+
     init {
         inflate(context, R.layout.widget_maxminindicator, this)
 
-        maxmin_max.allowAnimationOutsideParent()
-        maxmin_min.allowAnimationOutsideParent()
+        maxMinBinding = WidgetMaxminindicatorBinding.bind(this)
+
+        maxMinBinding.max.allowAnimationOutsideParent()
+        maxMinBinding.min.allowAnimationOutsideParent()
 
         maxAnimSet.apply {
             duration = animDurationMax
@@ -54,15 +58,15 @@ class MaxMinIndicator @JvmOverloads constructor(
     }
 
     private fun reRunAnimations() {
-        maxObjectAnimator = animateToPercent(minPercent, maxmin_min, minObjectAnimator, minAnimSet)
-        maxObjectAnimator = animateToPercent(maxPercent, maxmin_max, maxObjectAnimator, maxAnimSet)
+        minObjectAnimator = animateToPercent(minPercent, maxMinBinding.min, minObjectAnimator, minAnimSet)
+        maxObjectAnimator = animateToPercent(maxPercent, maxMinBinding.max, maxObjectAnimator, maxAnimSet)
     }
 
     fun setMinPercent(percent: Float) {
         if (minPercent != percent) {
             minPercent = minOf(maxOf(percent, 0F), 100F)
             minObjectAnimator =
-                animateToPercent(minPercent, maxmin_min, minObjectAnimator, minAnimSet)
+                animateToPercent(minPercent, maxMinBinding.min, minObjectAnimator, minAnimSet)
         }
     }
 
@@ -70,7 +74,7 @@ class MaxMinIndicator @JvmOverloads constructor(
         if (maxPercent != percent) {
             maxPercent = minOf(maxOf(percent, 0F), 100F)
             maxObjectAnimator =
-                animateToPercent(maxPercent, maxmin_max, maxObjectAnimator, maxAnimSet)
+                animateToPercent(maxPercent, maxMinBinding.max, maxObjectAnimator, maxAnimSet)
         }
     }
 

@@ -12,9 +12,9 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <include layout="@layout/inc_dashboard" />
+        <include android:id="@+id/dashboard_container" layout="@layout/inc_dashboard" />
 
-        <include layout="@layout/inc_diagnostics" />
+        <include android:id="@+id/diagnostic_container" layout="@layout/inc_diagnostics" />
 
     </LinearLayout>
 

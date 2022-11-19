@@ -9,16 +9,16 @@ import co.early.fore.kt.core.ui.trigger.ResetRule
 import co.early.fore.kt.core.ui.trigger.TriggerOnChange
 import co.early.fore.kt.core.ui.trigger.TriggerWhen
 import foo.bar.clean.domain.weather.PollenLevel
-import foo.bar.clean.ui.R
 import foo.bar.clean.ui.common.prettyPrint
 import foo.bar.clean.ui.common.showToast
 import foo.bar.clean.ui.common.toImgRes
-import kotlinx.android.synthetic.main.inc_dashboard.*
-import kotlinx.android.synthetic.main.inc_diagnostics.*
+import foo.bar.clean.ui.databinding.ActivityDashboardBinding
+import foo.bar.clean.ui.databinding.IncDashboardBinding
+import foo.bar.clean.ui.databinding.IncDiagnosticsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalStdlibApi
-class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), SyncableView {
+class DashboardActivity : FragmentActivity(), SyncableView {
 
     //models that we need to sync with
     private val viewModel: DashboardViewModel by viewModel()
@@ -26,25 +26,38 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
     private lateinit var showErrorTrigger: TriggerWhen
     private lateinit var fadePollenTrigger: TriggerOnChange<PollenLevel>
     private lateinit var rotateWindTurbineTrigger: TriggerOnChange<Int>
-    private lateinit var animations: DashboardAnimations
+    private var animations: DashboardAnimations? = null
+
+    private lateinit var dashboardVb: IncDashboardBinding
+    private lateinit var diagnosticsVb: IncDiagnosticsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //setup observers
+        // setup viewBinding
+        val activityDashboardBinding = ActivityDashboardBinding.inflate(layoutInflater)
+        dashboardVb = activityDashboardBinding.dashboardContainer
+        diagnosticsVb = activityDashboardBinding.diagnosticContainer
+        setContentView(activityDashboardBinding.root)
+
+        // setup observers
         lifecycle.addObserver(LifecycleObserver(this, viewModel))
 
-        //set up click listeners
-        dashboard_startautorefresh_btn.setOnClickListener { viewModel.startAutoRefresh() }
-        dashboard_stopautorefresh_btn.setOnClickListener { viewModel.stopAutoRefresh() }
-        dashboard_updatenow_btn.setOnClickListener { viewModel.updateNow() }
+        // set up click listeners
+        dashboardVb.apply {
+            startautorefreshBtn.setOnClickListener { viewModel.startAutoRefresh() }
+            stopautorefreshBtn.setOnClickListener { viewModel.stopAutoRefresh() }
+            updatenowBtn.setOnClickListener { viewModel.updateNow() }
+        }
 
         // set up animations
-        animations = DashboardAnimations(
-            dashboard_windturbine_img,
-            dashboard_pollenlevel_img,
-            dashboard_pollenbackground_img,
-        )
+        dashboardVb.apply {
+            animations = DashboardAnimations(
+                windturbineImg,
+                pollenlevelImg,
+                pollenbackgroundImg,
+            )
+        }
 
         setupTriggers()
     }
@@ -52,16 +65,18 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
     override fun syncView() {
 
         viewModel.viewState.apply {
-            dashboard_busy.showOrInvisible(isUpdating)
-            dashboard_updating_text.showOrInvisible(!autoRefresh.autoRefreshing)
-            dashboard_startautorefresh_btn.isEnabled = (!autoRefresh.autoRefreshing)
-            dashboard_stopautorefresh_btn.isEnabled = (autoRefresh.autoRefreshing)
-            dashboard_updatenow_btn.isEnabled = (!isUpdating)
-            dashboard_update_countdown.setPercent(autoRefresh.timeElapsedPcent)
-            dashboard_pollenlevel_img.setImageResource(weather.pollenLevel.toImgRes())
-            dashboard_tempmaxmin.setMaxPercent(weather.maxTempPercent())
-            dashboard_tempmaxmin.setMinPercent(weather.minTempPercent())
-            diagnostics_viewstate.text = this.prettyPrint()
+            // main UI panel
+            dashboardVb.busy.showOrInvisible(isUpdating)
+            dashboardVb.updatingText.showOrInvisible(!autoRefresh.autoRefreshing)
+            dashboardVb.startautorefreshBtn.isEnabled = (!autoRefresh.autoRefreshing)
+            dashboardVb.stopautorefreshBtn.isEnabled = (autoRefresh.autoRefreshing)
+            dashboardVb.updatenowBtn.isEnabled = (!isUpdating)
+            dashboardVb.updateCountdown.setPercent(autoRefresh.timeElapsedPcent)
+            dashboardVb.pollenlevelImg.setImageResource(weather.pollenLevel.toImgRes())
+            dashboardVb.tempmaxmin.setMaxPercent(weather.maxTempPercent())
+            dashboardVb.tempmaxmin.setMinPercent(weather.minTempPercent())
+            // diagnostics panel
+            diagnosticsVb.viewText.text = prettyPrint()
         }
 
         // this lets us fire one off events from changes of state, you can use your
@@ -85,11 +100,11 @@ class DashboardActivity : FragmentActivity(R.layout.activity_dashboard), Syncabl
 
         fadePollenTrigger = TriggerOnChange(
             currentState = { viewModel.viewState.weather.pollenLevel },
-            doThisWhenTriggered = { animations.animatePollenChange() }
+            doThisWhenTriggered = { animations?.animatePollenChange() }
         )
 
         rotateWindTurbineTrigger = TriggerOnChange({ viewModel.viewState.weather.windSpeedKmpH }) {
-            animations.animateWindSpeedChange(viewModel.viewState.weather.windSpeedPercent())
+            animations?.animateWindSpeedChange(viewModel.viewState.weather.windSpeedPercent())
         }
     }
 }

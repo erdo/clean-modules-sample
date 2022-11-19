@@ -1,6 +1,7 @@
 package foo.bar.clean.data.api.ktor.services.temperature
 
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.serialization.Serializable
 
@@ -18,7 +19,7 @@ data class TemperatureApi(
         fun create(httpClient: HttpClient): TemperatureApi {
             val baseUrl = "https://run.mocky.io/v3/"
             return TemperatureApi(
-                getTemperatureReadings = { httpClient.get("${baseUrl}a24a6aca-7880-448c-8824-07449d871ddd/?mocky-delay=1s") },
+                getTemperatureReadings = { httpClient.get("${baseUrl}a24a6aca-7880-448c-8824-07449d871ddd/?mocky-delay=1s").body() },
             )
         }
     }
