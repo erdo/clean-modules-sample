@@ -24,7 +24,7 @@ class PercentPie @JvmOverloads constructor(
     private var progressColour = 0
     private var targetPercent = 0f
     private var currentPercent = -1f
-    private val step = 3f
+    private val step = 1f
 
     public override fun onFinishInflate() {
         super.onFinishInflate()

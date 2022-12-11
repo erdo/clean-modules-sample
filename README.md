@@ -1,50 +1,40 @@
-# Clean Architecture (minus Reactive Streams)
-
-There is now a [dev.to](https://dev.to/erdo/clean-architecture-minus-reactive-streams-10i3) post to accompany this repo
-
-Many Android implementations of clean architecture use [Reactive Streams](http://www.reactive-streams.org/) (usually RxJava or Kotlin Flow) to connect architectural layers together. I believe that while Reactive Streams is a fantastic initiative, it is *completely the wrong abstraction* for **architecting android applications** and implementing non-trivial **reactive UIs** (please note, I'm not saying you shouldn't use reactive steams **in Android** there are plenty of good reasons to use reactive streams in general).
-
-The aim of this sample is to showcase an implemention of clean architeture which is: quicker to develop, more robust, easier to understand and maintain, has no magic, has less boilerplate, and a thinner UI layer. These are the qualities that let a technique scale for huge mobile app projects, and if you find any way to improve on the qualities listed, please open an issue or open a PR with suggested improvements.
+# Strict Unidirectional Data Flow, Clean Architecture Modules, No Reactive Streams
 
 ![screen shot of sample](clean_modules_screenshot.png)
 ![video of sample](clean-modules-vid.gif)
 
-The typical android clean architecture example you'll find on the internet is only reactive in a fairly trivial way: the UI triggers a request -> then receives a response, sometimes with updates (essentially a callback).
+Google's architectural recommendations change slowly over time but at least at the moment (late 2022), this app matches very well with the general principles outlined by google here:
 
-Once you include reacting to things which aren't triggered by the UI though, things get complicated. Let's say you want your UI to react to a change of network status, or an external accessory being plugged in, or a notification being received to the device (or all of these at the same time). Add Android's infamous lifecycle into the mix, and the abstraction starts to look a little shakey.
+- [separation of concerns](https://developer.android.com/topic/architecture#separation-of-concerns)
+- [drive UI from data models](https://developer.android.com/topic/architecture#drive-ui-from-model)
+- [single source of truth](https://developer.android.com/topic/architecture#single-source-of-truth)
+- [unidirectional data flow](https://developer.android.com/topic/architecture#unidirectional-data-flow)
 
-The typical solution to this is to turn _everything_ into a reactive stream, and with enough RxJava operators you can of course fix all the caching and memory reference problems - but these are problems that _only exist_ because of choosing an inappropriate abstraction in the first place. Remove Reactive Streams from your android architecture and you remove the problems
+## Separation of Concerns
 
-The UI above is reasonably complex, reactive, supports rotation, handles process death, and of course has no memory leaks. It's a single Activity written in 100 lines of code, and the ViewModel is about 60 lines. A reactive streams implementation is unlikely to match that level of code simplicity, and the situation rapidly deteriorates as you add more things to react to, like network availability, notifications etc.
+From Google: _"It's a common mistake to write all your code in an Activity or a Fragment. These UI-based classes should only contain logic that handles UI and operating system interactions. By keeping these classes as lean as possible, you can avoid many problems related to the component lifecycle, and improve the testability of these classes." This could have been taken right out of the [fore](https://erdo.github.io/android-fore/) docs (fore's strap-line is literally: "thinner android view layers"). This sample, like all the apps that use fore observers to tie their architectural layers together, the UI layer here is about as thin as you can possibly get.
 
-You can read more about how to tie architectural layers in this way in the [fore docs](https://erdo.github.io/android-fore/00-architecture.html#shoom)
+## Drive UI from data models
 
-# How does it work
+From Google: _"Another important principle is that you should drive your UI from data models, preferably persistent models. Data models represent the data of an app. They're independent from the UI elements and other components in your app. This means that they are not tied to the UI and app component lifecycle, but will still be destroyed when the OS decides to remove the app's process from memory." This is how all of the sample fore apps over the last 5 years have been built (observing these models is a fundamental part of implementing reactive UIs with fore). The typical structure is discussed [here](https://erdo.github.io/android-fore/00-architecture.html#shoom), but for this sample specifically the models are: WeatherModel (which is persistent) and RefreshModel (which has only transitory data and is not persistent), these models exist in the domain layer and therefore have no visibility of the UI layer.
 
-So how do you have reactive UIs without using reactive streams? In a nutshell: the observer pattern. This has been around for maybe half a century(?) and is the basis of just about every low level UI component in existence AFAIK.
+## Single Source of Truth
 
-In this sample, the observable pattern is implemented with a library (fore) but it's important to realise that the actual code is fairly trivial, it boils down to a list of observers (usually the observers are in the UI layer somewhere) that implement this interface:
+From Google: _"...The SSOT is the owner of [the] data, and only the SSOT can modify or mutate it. To achieve this, the SSOT exposes the data using an immutable type, and to modify the data, the SSOT exposes functions or receive events that other types can call." This describes exactly the purpose of the models mentioned above. For example WeatherModel exposes it's data using an immutable WeatherState class, like this: weatherModel.currentState() the state is guaranteed to be the latest correct state as viewed from the UI thread. The only way to modify the weather data is by calling public functions such as: WeatherModel.fetchLatestWeather()
 
-```
-interface Observer {
-    fun somethingChanged()
-}
-```
+## Unidirectional Data Flow
 
-## Clean modules
+From Google: _"In UDF, state flows in only one direction. The events that modify the data flow in the opposite direction." This is naturally how most fore apps are written (with fore, the state of the models is always what drives the UI, and the most obvious route for the click listeners which mutate that state, is in the opposite direction: from the UI to the models). This is the first sample I'm aware of that formalizes that rule though. So for this sample, rather than have a number of public functions like WeatherModel.fetchLatestWeather() we instead have a single WeatherModel.send(action: WeatherAction) function, to which we send Actions such as WeatherAction.FetchWeather
 
-This is how the kotlin modules are arranged in this sample (domain is implemented as a pure kotlin module). The app module is used for DI and that's about it (the app module is the only module that can see all other modules).
+## Clean Architecture
 
-![module structure](architecture.png)
+The rest of Google's architecture [advice](https://developer.android.com/topic/architecture) on that page is pretty sound (unlike some of their [sample apps](https://dev.to/erdo/tutorial-android-architecture-blueprints-full-todo-app-mvo-edition-259o) 🧐). There is one difference worth highlighting though, in this sample app we have identically named architectural layers to those mentioned in the google docs. But google's domain layer has a dependency on (can see) the data layer. The data layer is typically were your 3rd party libraries are (e.g retrofit) and we would ideally like to be able to swap these out when we want (e.g. to replace retrofit with ktor) without having to re-write our domain layer. If the domain layer is able to "see" retrofit specific code, it's likely that the domain layer will get polluted with various retrofit specific imports, which will mean removing retrofit will indeed mean re-writing the domain layer as well as the data layer, and if you're really unlucky it will mean rewriting the UI layer too.
 
-All Android implementations of [clean architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) need to be adapted because the original clean architecture blog post leans towards server side considerations, it doesn't directly address mobile applications, or kotlin, or reactive UIs, or ViewModels, or even say much about how you should treat state. As such there are no presenters, controllers or entities in this sample, and we use the word [*model*](https://en.wikipedia.org/wiki/Domain_model) to represent domain model classes, and they collaborate with each other using **mediators**.
+![basic architectural layers](basic-architecture.png)
 
-## Where are the use cases?
-You might be familiar with the common implementations of clean architecture adapted for android apps that are mentioned at the top of these docs - they often use a particular form of stateless UseCase class implemented with reactive streams. If you're interested, the [use cases](https://en.wikipedia.org/wiki/Use_case) for this app can be found in the public functions of the domain models e.g. WeatherModel.fetchWeatherReport()
+This problems is why [clean architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) has the dependency arrow pointing the other way. It gives use more flexibility to swap out third party libraries as we choose. So in our app the data layer can see the domain layer, but the domain layer cannot see the data layer.
 
-## Thick domain layer
-One aspect of this app's structure I particularly like is that it solves the problem of a thin domain layer. Alternative clean implementations I've used end up with a domain module containing nothing more than Repository interfaces, data classes, and a large number of (usually trivial) UseCase classes. Remember the domain module is typically the only module that is pure kotlin and completely abstracted from android itself, that makes it easy to test and highly portable so we really want keep as much code there as possible - it'll set us up nicely if we want to move to KMP later, for example.
-
+![clean module structure](clean-architecture.png)
 
 # App template
 In case you want to use this app as a starting point for something else, there is a bash script included that will rename the app packages (it's written for mac, use at your own risk).
@@ -62,14 +52,11 @@ This repo is also setup as a **github template repository** so you might want to
 If you want to submit a PR though, you'll need to fork the repo, not template it.
 
 # Testing
-I haven't added any unit tests or integration tests. I might get around to it, but they would be the same as the tests for all the other samples I've written. If I do I will add them all to the **app** module (I've found that adding tests to the individual modules spreads the tests around for no particular reason and causes problems any time you have a common test class that you want to reuse - most of the modules can only see one or no other modules so they can't share test code and you end up either duplicating shared test code or adding a common test module - which might as well be the app module :/ )
-
-# Next steps
-I'm working on a commercial sample at the moment which is a lot bigger and uses GraphQL, Ktor and Retrofit in the same app, it has exactly the same structure as this code, but there is so much of it, it's not really suitable as a "clean architecture without reactive streams" primer. It'll probably drop in a month or so, when it does I'll add it to the android-fore [project summary](https://github.com/erdo?tab=projects).
+I haven't added any unit tests or integration tests, but they would be the same as the tests for all the other samples I've written - the way the app is driven by the models, it's the models that are the main focus for tests (and given that they are written in a pure kotlin model with no knowledge of android, they are easily junit testable). The UI layer is very thin so there isn't a huge amount to test there but you can of course, just by mocking the state exposed by models.
 
 # License
 
-    Copyright 2015-2021 early.co
+    Copyright 2015-2022 early.co
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

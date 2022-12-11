@@ -3,25 +3,28 @@ package foo.bar.clean.ui.dashboard
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import co.early.fore.core.ui.SyncableView
+import co.early.fore.kt.core.delegate.Fore
 import co.early.fore.kt.core.ui.LifecycleObserver
 import co.early.fore.kt.core.ui.showOrInvisible
 import co.early.fore.kt.core.ui.trigger.ResetRule
 import co.early.fore.kt.core.ui.trigger.TriggerOnChange
 import co.early.fore.kt.core.ui.trigger.TriggerWhen
+import foo.bar.clean.domain.common.UdfModel
 import foo.bar.clean.domain.weather.PollenLevel
 import foo.bar.clean.ui.common.prettyPrint
 import foo.bar.clean.ui.common.showToast
 import foo.bar.clean.ui.common.toImgRes
+import foo.bar.clean.ui.dashboard.DashboardViewAction.*
 import foo.bar.clean.ui.databinding.ActivityDashboardBinding
 import foo.bar.clean.ui.databinding.IncDashboardBinding
 import foo.bar.clean.ui.databinding.IncDiagnosticsBinding
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 @ExperimentalStdlibApi
 class DashboardActivity : FragmentActivity(), SyncableView {
 
     //models that we need to sync with
-    private val viewModel: DashboardViewModel by viewModel()
+    private lateinit var viewModel: UdfModel<DashboardViewState, DashboardViewAction>
 
     private lateinit var showErrorTrigger: TriggerWhen
     private lateinit var fadePollenTrigger: TriggerOnChange<PollenLevel>
@@ -34,6 +37,8 @@ class DashboardActivity : FragmentActivity(), SyncableView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewModel = getViewModel<DashboardViewModel>()
+
         // setup viewBinding
         val activityDashboardBinding = ActivityDashboardBinding.inflate(layoutInflater)
         dashboardVb = activityDashboardBinding.dashboardContainer
@@ -45,9 +50,9 @@ class DashboardActivity : FragmentActivity(), SyncableView {
 
         // set up click listeners
         dashboardVb.apply {
-            startautorefreshBtn.setOnClickListener { viewModel.startAutoRefresh() }
-            stopautorefreshBtn.setOnClickListener { viewModel.stopAutoRefresh() }
-            updatenowBtn.setOnClickListener { viewModel.updateNow() }
+            startautorefreshBtn.setOnClickListener { viewModel.send(StartAutoRefresh) }
+            stopautorefreshBtn.setOnClickListener { viewModel.send(StopAutoRefresh) }
+            updatenowBtn.setOnClickListener { viewModel.send(FetchWeatherReport) }
         }
 
         // set up animations
@@ -63,8 +68,7 @@ class DashboardActivity : FragmentActivity(), SyncableView {
     }
 
     override fun syncView() {
-
-        viewModel.viewState.apply {
+        viewModel.currentState().apply {
             // main UI panel
             dashboardVb.busy.showOrInvisible(isUpdating)
             dashboardVb.updatingText.showOrInvisible(!autoRefresh.autoRefreshing)
@@ -94,17 +98,18 @@ class DashboardActivity : FragmentActivity(), SyncableView {
     private fun setupTriggers() {
 
         showErrorTrigger = TriggerWhen(
-            triggeredWhen = { viewModel.viewState.error != null },
-            doThisWhenTriggered = { showToast(viewModel.viewState.error) }
+            triggeredWhen = { viewModel.currentState().error != null },
+            doThisWhenTriggered = { showToast(viewModel.currentState().error) }
         ).resetRule(ResetRule.ONLY_AFTER_REVERSION)
 
         fadePollenTrigger = TriggerOnChange(
-            currentState = { viewModel.viewState.weather.pollenLevel },
+            currentState = { viewModel.currentState().weather.pollenLevel },
             doThisWhenTriggered = { animations?.animatePollenChange() }
         )
 
-        rotateWindTurbineTrigger = TriggerOnChange({ viewModel.viewState.weather.windSpeedKmpH }) {
-            animations?.animateWindSpeedChange(viewModel.viewState.weather.windSpeedPercent())
-        }
+        rotateWindTurbineTrigger =
+            TriggerOnChange({ viewModel.currentState().weather.windSpeedKmpH }) {
+                animations?.animateWindSpeedChange(viewModel.currentState().weather.windSpeedPercent())
+            }
     }
 }

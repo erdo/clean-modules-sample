@@ -1,6 +1,7 @@
 package foo.bar.clean.domain.weather
 
 import foo.bar.clean.domain.DomainError
+import foo.bar.clean.domain.common.State
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -10,7 +11,7 @@ data class WeatherState(
     val error: DomainError? = null,
     @Transient
     val isUpdating: Boolean = false,
-)
+) : State
 
 @Serializable
 data class WeatherReport(

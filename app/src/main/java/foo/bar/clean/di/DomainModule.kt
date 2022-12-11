@@ -1,27 +1,23 @@
 package foo.bar.clean.di
 
 import foo.bar.clean.domain.refresher.RefreshModel
-import foo.bar.clean.domain.refresher.OnRefreshMediator
+import foo.bar.clean.domain.weather.WeatherAction
 import foo.bar.clean.domain.weather.WeatherModel
 import org.koin.dsl.module
 
 val domainModule = module {
 
     /**
-     * Models and Mediators
+     * Models
      */
 
     single {
         RefreshModel(
-            onRefreshMediator = get(),
-            refreshIntervalMilliSeconds = 10000,
+            refresh = { (get() as WeatherModel).send(WeatherAction.FetchWeatherReport) },
+            refreshIntervalSeconds = 10,
             systemTimeWrapper = get(),
             logger = get()
         )
-    }
-
-    single {
-        OnRefreshMediator(get())
     }
 
     single {

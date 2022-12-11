@@ -1,17 +1,21 @@
 package foo.bar.clean.domain.weather
 
+import co.early.fore.kt.core.coroutine.awaitMain
+import co.early.fore.kt.core.coroutine.launchIO
 import co.early.fore.kt.core.logging.Logger
-import co.early.fore.core.observer.Observable
 import co.early.fore.kt.core.type.Either
-import co.early.fore.kt.core.type.Either.Success
-import co.early.fore.kt.core.coroutine.*
-import co.early.fore.kt.core.observer.ObservableImp
 import co.early.fore.kt.core.type.Either.Companion.success
 import co.early.fore.kt.core.type.Either.Fail
+import co.early.fore.kt.core.type.Either.Success
 import co.early.fore.kt.core.type.carryOn
 import co.early.persista.PerSista
-import foo.bar.clean.domain.Randomizer
 import foo.bar.clean.domain.DomainError
+import foo.bar.clean.domain.Randomizer
+import foo.bar.clean.domain.common.ActionReceiver
+import foo.bar.clean.domain.common.PersistentStateModelImp
+import foo.bar.clean.domain.common.StateModel
+import foo.bar.clean.domain.common.UdfModel
+import kotlin.reflect.full.createType
 
 interface PollenService {
     suspend fun getPollenCounts(): Either<DomainError, List<PollenCount>>
@@ -42,36 +46,37 @@ class WeatherModel(
     private val windSpeedService: WindSpeedService,
     private val perSista: PerSista,
     private val logger: Logger,
-) : Observable by ObservableImp() {
+) : UdfModel<WeatherState, WeatherAction>, StateModel<WeatherState> by PersistentStateModelImp(
+    WeatherState(),
+    WeatherState::class.createType(),
+    perSista
+) {
 
-    var currentState = WeatherState(isUpdating = false)
-        private set
-
-    init {
-        perSista.read(currentState) { readState ->
-            currentState = readState
-            notifyObservers()
+    override fun send(action: WeatherAction) {
+        when (action) {
+            WeatherAction.FetchWeatherReport -> fetchWeatherReport()
         }
     }
 
     /**
      * fetch weather reports using Ktor
      */
-    fun fetchWeatherReport() {
+    private fun fetchWeatherReport() {
 
         logger.i("fetchWeatherReport() thread:" + Thread.currentThread().id)
 
-        if (currentState.isUpdating) {
+        if (currentState().isUpdating) {
             return
         }
 
-        currentState = currentState.copy(isUpdating = true, error = null)
-        notifyObservers()
+        updateState { copy(isUpdating = true, error = null) }
 
         /**
          * See the fore sample apps for how to test this code - it's easy.
          * Or use an unwrapped coroutine here if you have a preferred solution
          * and/or aren't using fore
+         *
+         * What matters is we fetch our data, and update the state once we're done
          */
         launchIO {
 
@@ -79,16 +84,6 @@ class WeatherModel(
 
             var partialWeatherReport = WeatherReport()
 
-            /**
-             * that carryOn() extension function has nothing to do with the architecture
-             * of this sample btw, you can do whatever you like here, including using
-             * reactive streams if appropriate, but when you want to expose the calculated
-             * state, you need to: 1) set it, and 2) call notifyObservers().
-             *
-             * (If you're interested, carryOn() lets you transparently handle networking
-             * errors at each step - we make 3 network connections in the following code.
-             * Internet search for "railway oriented programming" and "andThen" functions)
-             */
             val weatherReport = pollenService.getPollenCounts()
                 .carryOn { pollenCounts ->
                     logger.i("received pollenCounts success")
@@ -119,21 +114,9 @@ class WeatherModel(
                 is Fail -> WeatherState(error = weatherReport.value, isUpdating = false)
             }
 
-            perSista.write(newState) { saved ->
-                logger.i("after writing to disk, perSista returns to us on the UI thread:" + Thread.currentThread().id)
-                currentState = saved
-                notifyObservers()
+            awaitMain {
+                updateState { newState }
             }
-
-            /**
-             * if we weren't using perSista to save our state, we would need to
-             * hop to the UI thread manually to safely update our state
-             */
-//            awaitMain {
-//                logger.i("jump to the UI thread to update our state, thread:" + Thread.currentThread().id)
-//                currentState = newState
-//                notifyObservers()
-//            }
         }
     }
 }

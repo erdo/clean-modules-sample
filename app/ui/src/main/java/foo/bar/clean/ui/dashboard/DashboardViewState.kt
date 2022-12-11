@@ -1,6 +1,7 @@
 package foo.bar.clean.ui.dashboard
 
 import foo.bar.clean.domain.DomainError
+import foo.bar.clean.domain.common.State
 import foo.bar.clean.domain.weather.PollenLevel
 
 const val MAX_WIND_SPEED = 60
@@ -12,7 +13,7 @@ data class DashboardViewState(
     val autoRefresh: AutoRefreshViewState = AutoRefreshViewState(),
     val error: DomainError? = null,
     val isUpdating: Boolean = false,
-)
+) : State
 
 data class WeatherViewState(
     val maxTempC: Int = MIN_DIAL_TEMP,

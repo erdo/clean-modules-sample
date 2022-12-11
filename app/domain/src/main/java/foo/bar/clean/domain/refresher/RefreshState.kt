@@ -1,15 +1,17 @@
 package foo.bar.clean.domain.refresher
 
-data class RefreshState(
-    val timeToNextUpdateSeconds: Int,
-    val updateIntervalSeconds: Int,
-    val updatesPaused: Boolean
-) {
-    fun percentElapsedToNextUpdate(): Float {
-        return if (updatesPaused || (updateIntervalSeconds == timeToNextUpdateSeconds) || updateIntervalSeconds == 0){
+import foo.bar.clean.domain.common.State
+
+data class RefreshState (
+    val timeToNextRefreshSeconds: Int = 0,
+    val refreshIntervalSeconds: Int = 0,
+    val paused: Boolean = true,
+): State {
+    fun percentElapsedToNextRefresh(): Float {
+        return if (paused || (refreshIntervalSeconds == timeToNextRefreshSeconds) || refreshIntervalSeconds == 0){
             0f
         } else {
-            100 * ((updateIntervalSeconds - timeToNextUpdateSeconds)).toFloat() / updateIntervalSeconds
+            100 * ((refreshIntervalSeconds - timeToNextRefreshSeconds)).toFloat() / refreshIntervalSeconds
         }
     }
 }
